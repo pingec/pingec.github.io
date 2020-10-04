@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>About TypeScript's type system - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>About TypeScript's type system</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>Sometimes TypesScript’s type system does not behave as one would expect it to…</p>
+<p><span class="more"></span></p>
+<h2 id="typescript-s-type-system-is-unsound">TypeScript’s type system is unsound</h2>
+<p>A sound type system never permits an incorrectly typed system to pass type checking. Well, it happens in TypeScript.</p>
+<p><a href="http://www.typescriptlang.org/Playground#src=%0Aclass%20Animal%20%7B%7D%0A%20%0Aclass%20Snake%20extends%20Animal%20%7B%0A%20%20%20%20slither()%20%7B%0A%20%20%20%20%20%20%20%20alert(%22Slithering!%22)%0A%20%20%20%20%7D%0A%7D%0A%20%0Aclass%20Horse%20extends%20Animal%20%7B%7D%0A%0A%20%2F%2Farrays%20are%20mutable%20and%20covariant%0Avar%20a%3A%20Snake%5B%5D%20%3D%20%5Bnew%20Snake()%5D%3B%0Avar%20b%3A%20Animal%5B%5D%20%3D%20a%3B%0Ab%5B0%5D%20%3D%20new%20Horse()%3B%0A%20%0Avar%20notASnake%3A%20Snake%20%3D%20a%5B0%5D%3B%0AnotASnake.slither()%3B%09%2F%2Fthis%20will%20fail%20at%20runtime"><img src="unsound.PNG" style="width:auto; height:auto"></a></p>
+<p><a href="http://www.typescriptlang.org/Playground#src=%0Ainterface%20IA%20%7B%20bar()%3A%20void%20%7D%0Ainterface%20IB%20%7B%20bar()%3A%20void%3B%20foo()%3A%20void%3B%20%7D%0A%0Afunction%20fn(passedFn%3A%20(a%3A%20IA)%20%3D%3E%20void)%20%7B%0A%20%20var%20a%3AIA%20%3D%20%7Bbar%3A%20function()%7B%7D%7D%3B%20%0A%20%20passedFn(a)%3B%20%0A%7D%0A%0A%2F%2F%20compiles%20but%20throws%20TypeError%20at%20runtime!%0Afn((b%3A%20IB)%20%3D%3E%20b.foo())%3B"><img src="unsound2.PNG" style="width:auto; height:auto"></a></p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

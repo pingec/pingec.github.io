@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Automating Pokemon Go - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Automating Pokemon Go</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><style>
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<p><img src="/blog/articles/automating-pokemon-go/pokemon_go_logo.png" class="clearfix" style="width:320px; float:left; margin-right:15px;">
+<br>
+<br>
+Today I have made public 2 projects that automate Pokemon Go. </p>
+<div style="clear: both;"></div> 
+
+
+
+<p><span class="more"></span></p>
+<h2 id="pogobot">PoGoBot</h2>
+<p><a href="https://github.com/pingec/PoGoBot">https://github.com/pingec/PoGoBot</a></p>
+<p>First one is a Pokemon Go bot written in C#. It can do many things, catch pokemons, spin pokestops and many other stuff. I lost interest after a while but managed to add every feature one would ever want (except for gyms).</p>
+<p><a href="PokemonRoute.png">
+    <img src="PokemonRoute_320.png" style="width:320px; display: block; margin-left: auto; margin-right: auto;">
+</a></p>
+<h2 id="discordpogosniper">DiscordPoGoSniper</h2>
+<p><a href="https://github.com/pingec/DiscordPoGoSniper">https://github.com/pingec/DiscordPoGoSniper</a></p>
+<p>This thing I wrote for a nice pokemon go community on reddit and some Discord channels. Basically it listens on various Discord channels for players to post pokemon spottings. Then it uses a modified version of the bot above to verify the posted sighting. The mechanism is similar to sniping, it teleports to the location, scans for the pokemon, initiates an encounter but instead catching the pokemon it simply reports back despawn time, IV% and attack moves to configurable Discord channels. It works very well and uses multiple PTC accounts concurrently. For a channel with 10000 members I needed at least 10 PTC accounts to make it work well. </p>
+<p>The biggest problem was the big load on Discord servers which at some point even crashed. Big thanks the Discord team for the hard work they put in and extra resources they brought in to make a 10000-online-members channel work.</p>
+<p><a href="PoGoDiscord.png">
+    <img src="PoGoDiscord_320.png" style="width:320px; display: block; margin-left: auto; margin-right: auto;">
+</a></p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

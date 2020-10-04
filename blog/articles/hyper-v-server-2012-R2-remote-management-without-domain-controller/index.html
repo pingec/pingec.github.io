@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Hyper-V Server 2012 R2 remote management in a workgroup - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Hyper-V Server 2012 R2 remote management in a workgroup</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>Being able to remotely manage a Hyper-V Server 2012 R2 machine is a must but for me it proved not so straight-forward as I would have expected it to be when the machine is in a <em>workgroup and not in a domain</em>. Just in case I ever forget about any steps, I am re-posting a copy of these very useful instructions which make Hyper-V manager, firewall management and server manager work remotely.</p>
+<p><span class="more"></span></p>
+<p>Taken from <a href="http://social.technet.microsoft.com/Forums/windowsserver/en-US/fe80f0aa-0697-4657-a1da-19d36b036698/guide-to-remote-manage-hyperv-servers-and-vms-in-workgroups-or-standalone">here</a> written by <a href="http://social.technet.microsoft.com/profile/michael%20star/?ws=usercard-mini">Michael Star</a></p>
+<pre><code>
+This guide is based on the following 3 products:
+Windows server 2012 (core)
+Windows 8
+Hyper-V server v3 / Hyper-V server 2012
+
+The following guide will enable you to:
+
+1: remotely manage your Hyper-V Virtual Machines with Hyper-V manager
+2: remotely manage your Hyper-V servers' firewall with a MMC snap-in.
+3: remotely manage your Hyper-V server (2012) with server manager
+
+! This should also work for Core installations of server 2012, but I haven't tried.
+
+This guide is purely focussed on servers in a WORKGROUP, or as a stand alone.
+I CAN NOT tell you what you need to do to get it working in a domain.
+
+
+* You can run these commands straight from the console (Physically at the machine) or through RDP.
+* You will need to be logged on as an administrator.
+* Commands are listed in somewhat random order; I do however advise to follow the steps as listed.
+* Commands with ? in front of them are only ment to be helpfull for troubleshooting,
+* and to identify settings and changes made.
+* Commands and instructions with ! in front of them are mandatory.
+
+- server: means the server core or hyper-v server (non gui)
+- client: means the machine you want to use for remote administration.
+- Some commands are spread over 2 lines; be sure to copy the full syntax.
+
+> To enable the Hyper-V manager to connect to your server, you need to perform the following 2 actions: (Assuming you have already installed the feature)
+1:
+! Client: Locate the C:\Windows\System32\Drivers\etc\hosts file.
+! right-click --> properties --> security
+! click --> edit --> add --> YOURUSERNAME or Administrator --> OK
+! then select this new user, and tick the "modify"-box under the "allow"-section.
+! apply the change, and close.
+! doubleclick the file, and open with notepad
+! add the ip-address and name of your server (no // or other crap needed)
+! Save the file
+# I recommend putting a shortcut to this file on the desktop.
+# If you change the ip-address of your server (e.g. move the server from staging to a live environment)
+# you might forget to do so in the hosts file.
+# Hyper-V manager, MMC, RSAT, and Server-manager all rely on the hosts-file to resolve the name.
+# some of these might connect to their respective service on an i.p.-level, but some don't.
+# This is the main reason you need to modify this file.
+
+! USE AN ELEVATED CMD/POWERSHELL PROMPT TO CONTINUE !
+# the next config needs to be done on windows 8.
+# It seems that it's already preconfigured under server 2012
+
+2:
+! Client: dcomcnfg
+! open component services --> computers
+! right-click -> my computer -> properties
+! select "COM SECURITY" tab
+! under "ACCESS PERMISSIONS" select "edit limits"
+! select "ANONYMOUS LOGON", and tick "remote access" under ALLOW
+# Without this adjustment, you can't connect to your Hyper-V server
+# with the Hyper-V manager if you're not in a domain.
+
+> And if you haven't done so already... make sure you have enabled remote management number 4 on the Hyper-V server console.
+----------------------------------------------------------------------
+
+
+> Next, is to get the MMC firewall snap-in working.
+   The reason for this, is to have a GUI available to configure it.
+   If you're happy without it, you may skip this and use a shell instead to do so.
+
+? server: netsh advfirewall show currentprofile
+# shows the current profile (public/domain/private) and its settings
+# depending on your needs, you should set the right profile to fit your needs.
+# You can easily do this when the MMC snap-in is done. (after you've followed these steps)
+
+! server: netsh advfirewall set currentprofile settings remotemanagement enable
+# enables remote management of the firewall on an application level 
+# (In other words: allows the firewall to be remotely managed)
+
+! server: netsh advfirewall firewall set rule group="Windows Firewall Remote Management" new enable=yes
+# allows remote management of the firewall, through the required firewall ports with TCP protocol.
+# 4 rules will be updated to allow access: public & Domain, dynamic and endpoint-mapper.
+# You can disable/add/change the rule from the MMC snap-in after finishing this guide.
+# e.g. set the firewall through the MMC-GUI to only allow specific ip-addresses etc.
+
+? server: netsh advfirewall firewall show rule all
+# Shows a list of available rules, and their current state.
+# when run from cmd, the list exceeds the maximum length for review.
+# (from cmd,type:) start powershell, and run the command from there.
+
+! Client: cmdkey /add:YOURSERVERNAME /user:USERNAMEONTHESERVER /pass:THEPASSWORDOFTHATUSER
+# I recommend you to use a username with enough privileges for management
+# All capital letters need to be replaced with your input
+# CMD answers "credential added successfully" when you're done
+
+! Client: locate MMC, and run it as an admin.
+# In windows 8/2012, go to search and type MMC. Right-click the icon, 
+# and choose run as admin on the bar below.
+
+! Client: application MMC: select "file" --> Add/remove snap-in 
+! --> (left pane) scroll down to "windows firewall" --> select and click "add"
+! select "another computer"
+! type the name of the server you want to manage (NO workgroup/ or //, just same name as you typed for cmdkey)
+
+* Part 2 is done.
+# Have a look by doubleclicking the firewall icon in the left pane.
+# It looks and works the same as the GUI version that you are familiar with.
+
+-------------------------------------------------------------------------------
+
+! Next is the Server Manager.
+# Follow the steps listed to get your server listed and manageable in the server manager.
+
+
+! Client: Open the created Firewall snap-in for your server.
+! Find the 3 "Remote Event Log Management" entries in the list of INBOUND rules, and enable them.
+! Open powershell --> in cmd windows, type: start powershell
+! run the following line in powershell
+! Client: in C:\Windows\system32> set-item WSMAN:\localhost\client\trustedhosts -value YOURSERVERNAME -concatenate
+# WinRM Security Configuration.
+# This command modifies the TrustedHosts list for the WinRM client. The computers in the TrustedHosts list might not be
+# authenticated. The client might send credential information to these computers. Are you sure that you want to modify
+# this list?
+# [Y] Yes  [N] No  [S] Suspend  [?] Help (default is "Y"): y
+#
+# I recommend to choose yes; unless you like to pull some more hairs...
+
+! server: winrm qc
+# WinRM service is already running on this machine.
+# WinRM is not set up to allow remote access to this machine for management.
+# The following changes must be made:
+# Configure LocalAccountTokenFilterPolicy to grant administrative rights remotely
+# to local users.
+# Make the changes? y / n
+!  select yes
+
+! Client: open the server 2012 server manager
+! click manage -> add server
+! select the DNS tab, and type the name of your server
+
+Done.
+
+You can now manage your remote server through the familiar computer management GUI.
+
+! Right-click your remote server, and select "Computer Management"
+
+--------------------------------------------------------------------------
+
+A few side notes:
+
+? The Performance tab seems to list the local machine's performance, in stead of the remote servers'
+? If you want Windows server backup, you need to right-click the server in the server manager, and select "add roles and features.
+? it will then become available under the "computer management" of the remote server.
+
+
+If you liked this guide you may thank my employer, Mr. Chris W.
+for giving me the time to work it all out.
+Cheers!
+</code></pre></section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

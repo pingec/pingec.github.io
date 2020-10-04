@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Fixing a faulty sensor in my freezer - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Fixing a faulty sensor in my freezer</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>I own a not-old-enough-to-die Electrolux ERO2923 refrigerator. Recently it started to do weird things, the refrigerator compartment was at almost room temperature (16°C) while the freezer was showing (2°C). Turns out the temperature sensor in the freezer was faulty.</p>
+<p><span class="more"></span></p>
+<h2 id="story">Story</h2>
+<p>So one day I come into the kitchen and the fridge seems not to function. The temperature is way too high. Then I inspect the freezer - to the touch it seems very very cold but the temperature gauge shows 2°C. I check the backside and see lots of ice on the piping which looks cool - but wrong.</p>
+<p><a href="IMG_20160306_164320.jpg">
+    <img src="IMG_20160306_164320_320.jpg" style="width:320px; display: block; margin-left: auto; margin-right: auto;">
+</a></p>
+<p>I call an Electrolux repairs technician and he confirms my suspicion - something is wrong with the temperature sensing mechanism of the freezer. 
+This is bad news, he explains, because there are no official spare parts nor repair procedures for the freezer. Contrarily the fridge 
+compartment is repairable - see <a href="/blog/articles/fixing-a-faulty-freezer-sensor/599374122.pdf">599374122.pdf</a> and <a href="/blog/articles/fixing-a-faulty-freezer-sensor/599374207.pdf">599374207.pdf</a>. </p>
+<h2 id="my-repair">My repair</h2>
+<p>Temperature sensing is done with thermistors. I dug out <a href="/blog/articles/fixing-a-faulty-freezer-sensor/599374205.pdf">this pdf</a> which contains a chart of the thermistor resistance at various temperatures.
+I was able to find a thermistor with the same characteristics - <a href="/blog/articles/fixing-a-faulty-freezer-sensor/NTCLE203E3272FB0.pdf">NTCLE203E3272FB0</a>. The sensor should be located somewhere in the middle of the freezer so I taped it there and wired it to the controller board instead of the old one. You can figure out the wiring by observing the working sensor that is wired to the fridge, the freezer’s one is the same. The appliance has been running fine for a couple of months now. I have it set at -16°C and the actual temperature measured with an accurate thermometer is -18°. The repair cost me 3€ while a new fridge would have cost 500€ or more.</p>
+<p><a href="DSC04159.jpg">
+    <img src="DSC04159_320.jpg" style="width:320px; display: block; margin-left: auto; margin-right: auto;">
+</a></p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

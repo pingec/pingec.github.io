@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Exporting SSKJ dictionary - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Exporting SSKJ dictionary</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>A few years ago, a friend came to me for advice about solving her problem on how to access her digital copy of Dictionary of Standard Slovenian Language from her Android phone. She told me that there is no Android version and that she was using TeamViewer to query the dictionary installed on her desktop machine. Recently, the same problem has been brought up again by another person so following is a <em>hypothetical</em> explanation of how I would have approached this problem. </p>
+<p><span class="more"></span></p>
+<h1 id="exporting-the-data">Exporting the data</h1>
+<p>Looks like reverse-engineering the database structure is the task ahead of us, or is it?
+Well this is a dictionary, the data is not hidden, it is just served definition-by-definition and why not export it that way?</p>
+<h2 id="autoit-to-the-rescue">AutoIt to the rescue</h2>
+<pre><code class="lang-avrasm">Run(<span class="string">"D:\Slovarji\ASP32\ASP32.EXE"</span>, <span class="string">""</span>,  @SW_MAXIMIZE)
+Local $file = FileOpen(<span class="string">"SSKJ.txt"</span>, <span class="number">1</span>)
+<span class="keyword">sleep</span>(<span class="number">2000</span>)
+$title = WinGetTitle(<span class="string">""</span>)
+Send(<span class="string">"{TAB}"</span>)    <span class="comment">;focus record</span>
+
+For $i = <span class="number">0</span> To <span class="number">42090</span> Step <span class="number">1</span>
+   Send(<span class="string">"{TAB}"</span>)    <span class="comment">;focus record content</span>
+   Send(<span class="string">"^a"</span>)       <span class="comment">;select all</span>
+   Send(<span class="string">"^c"</span>)        <span class="comment">;copy</span>
+   FileWrite($file, ClipGet() &amp; @CRLF)   
+   Send(<span class="string">"{TAB}"</span>)    <span class="comment">;focus search box</span>
+   Send(<span class="string">"{TAB}"</span>)    <span class="comment">;focus record</span>
+   Send(<span class="string">"{DOWN}"</span>)    <span class="comment">;move to next record</span>
+Next
+
+FileClose($file)
+</code></pre>
+<p>This should produce a “SSKJ.txt” file where definitions are delimited with two CRLF’s.</p>
+<h1 id="querying-the-data">Querying the data</h1>
+<p>A simple way to then query the exported data si to read the definitions into memory and serve them on demand. Here is a simple draft implementation in node.js.</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> lookup = {};
+<span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);
+
+fs.readFile(<span class="string">'./SSKJ.txt'</span>, <span class="string">'utf8'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err, data</span>) </span>{
+
+    <span class="keyword">if</span> (err) <span class="keyword">throw</span> err;
+
+    data.split(<span class="string">'\r\n\r\n'</span>).forEach( <span class="function"><span class="keyword">function</span>(<span class="params">element, index, array</span>)</span>{    
+
+        <span class="keyword">var</span> key = element.slice(element.indexOf(<span class="string">"\t"</span>)+<span class="number">1</span>,element.indexOf(<span class="string">" "</span>));
+        <span class="keyword">var</span> value = element;
+        lookup[key] = element;        
+    });
+});
+
+<span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);
+http.createServer(<span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>{
+    res.writeHead(<span class="number">200</span>, { <span class="string">'content-type'</span>: <span class="string">'text/plain; charset=utf-8'</span> });
+
+    <span class="comment">//url should be of format /sskj/keyword</span>
+    <span class="keyword">var</span> decoded = <span class="built_in">decodeURIComponent</span>(req.url);
+    <span class="built_in">console</span>.log(decoded);
+    <span class="keyword">var</span> match = <span class="regexp">/\/sskj\/(.*)/</span>.exec(decoded);
+    <span class="keyword">if</span> (match &amp;&amp; match.length &gt; <span class="number">1</span>)
+    {
+        <span class="built_in">console</span>.log(match[<span class="number">1</span>]);
+        <span class="built_in">console</span>.log(lookup[match[<span class="number">1</span>]]);
+        res.end(lookup[match[<span class="number">1</span>]]);
+    }
+    <span class="keyword">else</span>
+        res.end(<span class="string">'no match or bad request'</span>);
+
+}).listen(<span class="number">1337</span>, <span class="string">"0.0.0.0"</span>);
+<span class="built_in">console</span>.log(<span class="string">'server running at http://127.0.0.1:1337/ example url http://127.0.0.1:1337/sskj/trubadur'</span>);
+</code></pre>
+<p>Now it only needs a mobile app with a GUI for the user.</p>
+<p>Also it would be useful to turn it into an offline mobile app where data is stored through SQLite and add word autocompletion but enough of hypothetical talk for today.</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

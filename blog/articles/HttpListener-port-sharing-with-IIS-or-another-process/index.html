@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>HttpListener port sharing with IIS or another process - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>HttpListener port sharing with IIS or another process</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>Here I explore some options of hosting a HttpListener-based process on port 80 alongside another process that binds to port 80. Sharing one tcp port among multiple processes on the same Windows machine can sometimes be possible with some limitations. It mostly depends whether programs are implemented on top of the http.sys driver or not.</p>
+<p><span class="more"></span></p>
+<h3 id="about-http-sys-implementors">About Http.sys implementors</h3>
+<p>I have a custom web server that uses HttpListener internally. HttpListener (same as IIS) calls the Microsoft HTTP Server API which is an interface for the kernel-mode device driver called HTTP protocol stack (HTTP.sys).
+<strong>Any application that runs on top of http.sys can be made to run alongside and work together with another http.sys app (eg. IIS) on the same listening port.</strong> In order to achieve that, <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364698(v=vs.85).aspx">urlprefixes</a> must be properly configured.</p>
+<p><img src="./Http.sys.stack.png" style="width:620px; display: block; margin-left: auto; margin-right: auto;"></p>
+<p>In my case I needed both IIS and HttpListener to listen on port 80. </p>
+<p>As long as urlprefixes do not clash, this is possible. </p>
+<p>For example IIS (or another http.sys app/lib) can listen on <a href="http://host1:80">http://host1:80</a> and HttpListener on <a href="http://host2:80">http://host2:80</a> and it will work.</p>
+<p>To show all HTTP.SYS currently registered prefixes, you can use the following command:</p>
+<pre><code>netsh http show servicestate | findstr /r &quot;Server\ Session HTTP&quot;
+</code></pre><p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364698(v=vs.85).aspx">More about UrlPrefixes</a></p>
+<h3 id="sharing-same-port-with-iis">Sharing same port with IIS</h3>
+<p>By default IIS binds to url prefix “<a href="http://*:80/">http://*:80/</a>“ which is a weak wildcard so all host-specific bindings by HttpListener will take precedence over IIS. So setting HttpListener to listen on “<a href="http://app1.mydomain.com:80/">http://app1.mydomain.com:80/</a>“ will work fine. Binding IIS to “<a href="http://app2.mydomain.com:80/">http://app2.mydomain.com:80/</a>“ would also work fine.</p>
+<h3 id="segregating-httplistener-and-a-non-http-sys-server-on-different-interfaces">Segregating HttpListener and a non-http.sys server on different interfaces</h3>
+<p>Let there be two IPs available (for example 1.1.1.1 and 2.2.2.2) and we want to have HttpListener listen on one and <em>Apache</em> on the other.</p>
+<ol>
+<li><p>Limit HTTP Server API to one IP by doing:
+ netsh http add iplisten 1.1.1.1</p>
+<p>This will limit HTTP Server API and thus HttpListener to only listen on 1.1.1.1.</p>
+</li>
+<li><p>Make apache bind to 2.2.2.2.</p>
+</li>
+</ol>
+<p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364698(v=vs.85).aspx">Additional info</a></p>
+<h3 id="segregating-iis-and-httplistener-on-different-interfaces">Segregating IIS and HttpListener on different interfaces</h3>
+<p>To bind IIS and HttpListener each to its own IP (for example 1.1.1.1 and 2.2.2.2).
+Set HttpListener’s urlprefix to “<a href="http://1.1.1.1:80">http://1.1.1.1:80</a>“. Set IIS IP binding to “2.2.2.2” which will by default internally translate to a urlprefix of “<a href="http://2.2.2.2:80">http://2.2.2.2:80</a>“.</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

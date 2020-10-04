@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Syncing Windows workstation and Debian server with Syncthing - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Syncing Windows workstation and Debian server with Syncthing</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p><a href="https://syncthing.net/">
+    <img src="//pingec.si/blog/articles/syncing-windows-workstation-and-debian-server-with-syncthing/syncthing-logo-horizontal.svg" style="width:320px; float: left; margin-right:15px">
+</a></p>
+<p>This is a short recipe on how to setup <a href="https://syncthing.net/">Syncthing</a> for syncing files between my Windows workstation and a Debian web server over internet. Syncing is done through a ssh tunnel, no need to expose any public ports to the internet. </p>
+<div style="display: block; clear: both;"></div>
+
+<p><span class="more"></span></p>
+<h1 id="prerequisites">Prerequisites</h1>
+<ul>
+<li><a href="http://the.earth.li/~sgtatham/putty/latest/x86/putty-0.66-installer.exe">Putty bundle</a> installed on the Windows workstation (this time we need plink.exe)</li>
+</ul>
+<h1 id="syncthing-setup-on-debian-server">Syncthing setup on Debian server</h1>
+<ol>
+<li><p>Follow the instructions provided <a href="http://apt.syncthing.net/">here</a><br> Just in case, here they are:</p>
+<pre><code class="lang-bash"> <span class="comment"># Add the release PGP keys:</span>
+ curl <span class="operator">-s</span> https://syncthing.net/release-key.txt | sudo apt-key add -
+
+ <span class="comment"># Add the "release" channel to your APT sources:</span>
+ <span class="built_in">echo</span> <span class="string">"deb http://apt.syncthing.net/ syncthing release"</span> | sudo tee /etc/apt/sources.list.d/syncthing.list
+
+ <span class="comment"># Update and install syncthing:</span>
+ sudo apt-get update
+ sudo apt-get install syncthing
+</code></pre>
+</li>
+<li>In case you need to edit any settings like ports you need to edit  ~/.config/syncthing/config.xml</li>
+<li><p>Create the file /etc/init.d/syncthing</p>
+<pre><code class="lang-bash"> sudo touch /etc/init.d/syncthing
+ sudo chmod <span class="number">755</span> /etc/init.d/syncthing
+ sudo chown root:root /etc/init.d/syncthing
+</code></pre>
+</li>
+<li><p>With the following content:</p>
+<pre><code class="lang-bash"> <span class="comment">#!/bin/sh</span>
+ <span class="comment">### BEGIN INIT INFO</span>
+ <span class="comment"># Provides: syncthing</span>
+ <span class="comment"># Required-Start: $local_fs $remote_fs</span>
+ <span class="comment"># Required-Stop: $local_fs $remote_fs</span>
+ <span class="comment"># Should-Start: $network</span>
+ <span class="comment"># Should-Stop: $network</span>
+ <span class="comment"># Default-Start: 2 3 4 5</span>
+ <span class="comment"># Default-Stop: 0 1 6</span>
+ <span class="comment"># Short-Description: Multi-user daemonized version of syncthing.</span>
+ <span class="comment"># Description: Starts the syncthing daemon for all registered users.</span>
+ <span class="comment">### END INIT INFO</span>
+
+ <span class="comment"># Replace with users you want to run syncthing clients for</span>
+ syncthing_USERS=<span class="string">"myusername"</span>
+ DAEMON=/usr/bin/syncthing
+
+ <span class="function"><span class="title">startd</span></span>() {
+ <span class="keyword">for</span> stuser <span class="keyword">in</span> <span class="variable">$syncthing_USERS</span>; <span class="keyword">do</span>
+     HOMEDIR=$(getent passwd <span class="variable">$stuser</span> | awk -F: <span class="string">'{print $6}'</span>)
+     <span class="keyword">if</span> [ <span class="operator">-f</span> <span class="variable">$config</span> ]; <span class="keyword">then</span>
+     <span class="built_in">echo</span> <span class="string">"Starting syncthiing for <span class="variable">$stuser</span>"</span>
+     start-stop-daemon -b -o -c <span class="variable">$stuser</span> -S -u <span class="variable">$stuser</span> -x <span class="variable">$DAEMON</span>
+     <span class="keyword">else</span>
+     <span class="built_in">echo</span> <span class="string">"Couldn't start syncthing for <span class="variable">$stuser</span> (no <span class="variable">$config</span> found)"</span>
+     <span class="keyword">fi</span>
+ <span class="keyword">done</span>
+ }
+
+ <span class="function"><span class="title">stopd</span></span>() {
+ <span class="keyword">for</span> stuser <span class="keyword">in</span> <span class="variable">$syncthing_USERS</span>; <span class="keyword">do</span>
+     dbpid=$(pgrep -fu <span class="variable">$stuser</span> <span class="variable">$DAEMON</span>)
+     <span class="keyword">if</span> [ ! -z <span class="string">"<span class="variable">$dbpid</span>"</span> ]; <span class="keyword">then</span>
+     <span class="built_in">echo</span> <span class="string">"Stopping syncthing for <span class="variable">$stuser</span>"</span>
+     start-stop-daemon -o -c <span class="variable">$stuser</span> -K -u <span class="variable">$stuser</span> -x <span class="variable">$DAEMON</span>
+     <span class="keyword">fi</span>
+ <span class="keyword">done</span>
+ }
+
+ <span class="function"><span class="title">status</span></span>() {
+ <span class="keyword">for</span> stuser <span class="keyword">in</span> <span class="variable">$syncthing_USERS</span>; <span class="keyword">do</span>
+     dbpid=$(pgrep -fu <span class="variable">$stuser</span> <span class="variable">$DAEMON</span>)
+     <span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$dbpid</span>"</span> ]; <span class="keyword">then</span>
+     <span class="built_in">echo</span> <span class="string">"syncthing for USER <span class="variable">$stuser</span>: not running."</span>
+     <span class="keyword">else</span>
+     <span class="built_in">echo</span> <span class="string">"syncthing for USER <span class="variable">$stuser</span>: running (pid <span class="variable">$dbpid</span>)"</span>
+     <span class="keyword">fi</span>
+ <span class="keyword">done</span>
+ }
+
+ <span class="keyword">case</span> <span class="string">"<span class="variable">$1</span>"</span> <span class="keyword">in</span>
+ start) startd
+     ;;
+ stop) stopd
+     ;;
+ restart|reload|force-reload) stopd &amp;&amp; startd
+     ;;
+ status) status
+     ;;
+ *) <span class="built_in">echo</span> <span class="string">"Usage: /etc/init.d/syncthing {start|stop|reload|force-reload|restart|status}"</span>
+     <span class="built_in">exit</span> <span class="number">1</span>
+ ;;
+ <span class="keyword">esac</span>
+
+ <span class="built_in">exit</span> <span class="number">0</span>
+</code></pre>
+<p> <strong>Don’t forget to set syncthing_USERS to the desired user for running syncthing.</strong></p>
+</li>
+<li><p>Now run</p>
+<pre><code class="lang-bash"> /etc/init.d/syncthing start
+</code></pre>
+<p> Which will start the daemon.</p>
+</li>
+<li><p>To make it autostart on bootup run</p>
+<pre><code class="lang-bash"> sudo update-rc.d syncthing defaults
+ sudo update-rc.d syncthing <span class="built_in">enable</span>
+</code></pre>
+<h1 id="windows-workstation-setup">Windows workstation setup</h1>
+</li>
+<li>Download the <a href="https://syncthing.net/">Syncthing Core (CLI &amp; Web UI) for Windows</a></li>
+<li>Extract it to C:\Program Files\syncthing</li>
+<li>Create “C:\Program Files\syncthing\SYNCNOW.bat” with the following content:<pre><code class="lang-bash">start syncthing.exe
+start <span class="string">""</span> http://localhost:<span class="number">8385</span>
+<span class="string">"C:\Program Files (x86)\PuTTY\plink.exe"</span> -L <span class="number">22001</span>:<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">22000</span> -L <span class="number">8385</span>:<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8384</span> yoursshuser@your.debian.server.com
+</code></pre>
+</li>
+<li><p>Two web pages should open <a href="http://localhost:8385/">http://localhost:8385/</a> and <a href="http://127.0.0.1:8384/">http://127.0.0.1:8384/</a></p>
+<p> <a href="./Syncthing_screencap.PNG">
+ <img src="./Syncthing_screencap_320.png" style="width:320px; display: block; margin-left: auto; margin-right: auto;">
+</a></p>
+</li>
+<li><p>Proceed to adding both machines IDs so they can see each other. (Check Syncthing instructions for more info on basic setup)</p>
+</li>
+</ol>
+<p>That’s it. I prefer to run syncthing on the workstation manually only when I need to. So when file syncing is needed, SYNCNOW.bat should be ran manually and syncing should work. You can easily stop the process by simply closing all the opened cmd windowns.</p>
+<h1 id="permissions-clash">Permissions clash</h1>
+<p>Someone asked what to do if syncthng is creating files and directories with a syncuser:syncgroup different from what apache is using and thus apache cannot access file/dirs created by sync user. 
+One solution that comes to mind is the following:</p>
+<ol>
+<li><p>Modify /etc/init.d/syncthing from</p>
+<pre><code class="lang-bash">start-stop-daemon -b -o -c <span class="variable">$stuser</span> -S -u <span class="variable">$stuser</span> -x <span class="variable">$DAEMON</span>
+</code></pre>
+<p>to</p>
+<pre><code class="lang-bash">start-stop-daemon -b -o -c <span class="variable">$stuser</span> -S -u <span class="variable">$stuser</span> -x <span class="variable">$DAEMON</span> --umask <span class="number">002</span>
+</code></pre>
+</li>
+<li><p>In the windows workstation web ui set “Ignore Permissions” to true. This seems to be required to have newly-created files on linux-based server be writable by the group <a href="https://github.com/syncthing/syncthing/issues/1339">https://github.com/syncthing/syncthing/issues/1339</a></p>
+</li>
+<li><p>Run the following commands on server (presuming that /var/www/sync is the dir shared by apache and syncthing):</p>
+<pre><code class="lang-bash">chown -R syncuser:www-data /var/www
+chmod -R g+s /var/www
+</code></pre>
+</li>
+</ol>
+<p>Now all new dirs and files should preserve www-data group and have rw-rw-r– permissions.</p>
+<p>(If anyone knows a more better way, please let me know.)</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

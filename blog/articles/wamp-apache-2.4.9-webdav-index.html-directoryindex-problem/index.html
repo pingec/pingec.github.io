@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Apache 2.4.9 WebDAV DirectoryIndex problem - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Apache 2.4.9 WebDAV DirectoryIndex problem</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>A while ago I upgraded Apache running on my Windows machine from 2.2 to 2.4 (2.4.9 to be exact). I did so by installing the WampServer stack. Some things stopped working and I was able to fix most of them but one. My WebDAV setup stopped working after the migration. Since I rarely use it I let it be but today I decided to dig into it and have found the problem to be a bug in Apache 2.4.x (could be other versions too).</p>
+<p><span class="more"></span></p>
+<h2 id="symptoms">Symptoms</h2>
+<p>I did some debugging. A basic webdav config with digest auth would look something like this:</p>
+<pre><code class="lang-Apache">Alias /webdav &quot;c:/wamp/www/webdav&quot;
+&lt;Location /webdav &gt;        
+    Order allow,deny
+    Allow from all    
+    Dav On
+
+    AuthType Digest
+    AuthName DAV-upload
+    AuthDigestProvider file
+    AuthUserFile &quot;c:/wamp/blahblah.passwd&quot;
+
+    Require valid-user
+&lt;/Location&gt;
+</code></pre>
+<p>This however stopped working for me with Apache 2.4.9. When trying to map the webdav location to a windows drive I would get an error: “The network path was not found. Error code 0x80070035.”</p>
+<p><img src="/blog/articles/wamp-apache-2.4.9-webdav-index.html-directoryindex-problem/windows8.1-apache2.4.9-webdav-index.html-directoryindex-problem.png" alt="Alt text"></p>
+<p>In the background a request like this is sent:</p>
+<pre><code>PROPFIND http://example.com/webdav/ HTTP/1.1
+User-Agent: Microsoft-WebDAV-MiniRedir/6.3.9600
+Depth: 0
+translate: f
+Connection: Keep-Alive
+Content-Length: 0
+Host: example.com
+Authorization: Digest username=&quot;someUser&quot;,realm=&quot;webdav&quot;,nonce=&quot;5a2a2178c007e77ba8935157451cf3&quot;,uri=&quot;/webdav/&quot;,cnonce=&quot;4091fa2ad1af5481ce26f4a90fb962&quot;,nc=00000001,algorithm=MD5,response=&quot;507fa5932dd63682cf2c10c6746a6b&quot;,qop=&quot;auth&quot;
+</code></pre><p>And a response like this is received:</p>
+<pre><code>HTTP/1.1 405 Method Not Allowed
+Date: Fri, 27 Jun 2014 06:46:57 GMT
+Server: Apache
+Allow: GET,HEAD,POST,OPTIONS,TRACE
+Content-Length: 245
+Keep-Alive: timeout=5, max=97
+Connection: Keep-Alive
+Content-Type: text/html; charset=iso-8859-1
+
+&lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;title&gt;405 Method Not Allowed&lt;/title&gt;
+&lt;/head&gt;&lt;body&gt;
+&lt;h1&gt;Method Not Allowed&lt;/h1&gt;
+&lt;p&gt;The requested method PROPFIND is not allowed for the URL /webdav/index.html.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</code></pre><p>That appended “index.html” made me think, so I tried renaming it. And bingo! WebDAV started working. Armed with this clue I googled some more and finally found a report of a <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=54914">bug in Apache causing such behavior</a>.</p>
+<h2 id="solution">Solution</h2>
+<p>The simplest solution is to apply this workaround to all your WebDAV-enabled locations:</p>
+<pre><code class="lang-Apache">&lt;Limit PROPFIND&gt;
+DirectoryIndex never-encounterable-file-name.html
+&lt;/Limit&gt;
+</code></pre>
+<h3 id="keywords-">Keywords:</h3>
+<p>Apache 2.4 wamp webdav directoryindex index.html problem.
+The network path was not found. Error code 0x80070035.
+PROPFIND 405 Method Not Allowed.
+The requested method PROPFIND is not allowed for the URL /index.html.</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

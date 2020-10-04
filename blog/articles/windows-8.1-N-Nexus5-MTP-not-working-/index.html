@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Windows 8.1 N Nexus 5 missing driver (MTP) - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Windows 8.1 N Nexus 5 missing driver (MTP)</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>I would never have expected that hooking up a Nexus 5 phone could be a PITA on a Windows 8.1 N machine.</p>
+<p><span class="more"></span></p>
+<h2 id="symptoms">Symptoms</h2>
+<p>So you have a freshly installed Windows 8.1 N machine and you want to transfer some photos from your Nexus 5. You connect the two with a USB cable and are unpleasantly surprised. Windows is having troubles with driver installation for the Nexus 5.</p>
+<p><img src="/blog/articles/windows-8.1-N-Nexus5-MTP-not-working-/0.png" alt="Nexus 5 driver problem"></p>
+<p>You can try forcing Windows to recheck for drivers, downloading and manually installing them, installing Adb Usb Drivers, but “The drivers for this device are not installed. (Code 28)” message will not go away.</p>
+<p><img src="/blog/articles/windows-8.1-N-Nexus5-MTP-not-working-/1.png" alt="Nexus 5 driver problem2"></p>
+<p>Then after lots of Googling I stumbled upon a suggestion to install the “Media Feature Pack for N and KN versions of Windows 8.1”. It immediately hit me, this must be it. And I got confirmation after reading <a href="http://support.microsoft.com/kb/2929699">this</a> which explicitly states that the following funcionality is <strong>excluded</strong> from <strong>N</strong> and <strong>KN</strong> editions of Windows 8.1</p>
+<blockquote>
+<p>Windows 8.1 Portable Devices (WPD) infrastructure. Communicates with attached media and storage devices, including devices that support the Media Transfer Protocol. </p>
+</blockquote>
+<h2 id="solution">Solution</h2>
+<p>To get this funcionality you must download and install the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=40744">Media Feature Pack for N and KN versions of Windows 8.1</a> which is quite big (85MB) and installs lots of other features you don’t really need at this point. AFAIK there is no simple way around this but at least we can access our MTP phones over USB now.</p>
+<h2 id="comment">Comment</h2>
+<p>I don’t know why this feature was stripped from the N edition but from my point of view this is not cool. Especially since it’s quite hard for an average user to figure out where the problem is. If they remove a feature they should at least provide a mechanism of telling the user on how to make it work or offering to install this functionality automatically like they do for other drivers.</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

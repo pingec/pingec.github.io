@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Tunelling RDP over SSH through NAT on both sides - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Tunelling RDP over SSH through NAT on both sides</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>A short recipe on how to establish a rdp session from machine A to machine B even though both machines sit behind a NAT (and/or firewall)…</p>
+<p><span class="more"></span></p>
+<h2 id="intro">Intro</h2>
+<p>This is another note-to-myself post because digging the same recipe out of scripts in my filesystem is a very tedious task.</p>
+<p>The problem: we have two machines, both behind NAT/firewall and we would like to RDP from one to the other over the internet even though we do not have the option of opening/forwarding any ports on the public interface and through the firewall. We use ssh tunnels through a third machine. This works for any TCP connection really, it is not limited to RDP.</p>
+<p><img src="/blog/articles/tunelling-rdp-over-ssh-through-nat-on-both-sides/network_setup.PNG" alt="Alt text"></p>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>A ssh server running a ssh server (in my case a cheap OpenWrt router)</li>
+<li>plink.exe on both host and client rdp machines</li>
+</ul>
+<h2 id="solution">Solution</h2>
+<p>Let’s say the ssh server’s address is ssh.example.com.</p>
+<ol>
+<li><p>On rdp host machine run:</p>
+<pre><code class="lang-bash">plink.exe -N -C -v -R <span class="number">6000</span>:localhost:<span class="number">3389</span> sshuser@ssh.example.com -pw password
+</code></pre>
+</li>
+<li><p>On rdp client machine run:</p>
+<pre><code class="lang-bash">plink.exe -N -C -v -L <span class="number">5555</span>:localhost:<span class="number">6000</span> sshuser@ssh.example.com -pw password
+</code></pre>
+</li>
+<li><p>When both tunnels are established, on rdp client machine open remote desktop client and connect to:</p>
+<pre><code class="lang-bash">localhost:<span class="number">5555</span>
+</code></pre>
+</li>
+</ol>
+<h2 id="addendum-setting-up-a-ssh-only-user-without-shell-on-openwrt">Addendum: Setting up a ssh-only user without shell on OpenWrt</h2>
+<p>When connecting with a no shell user, -N switch is compulsory.</p>
+<pre><code class="lang-bash"><span class="comment"># (14.07-rc3, r42056)</span>
+<span class="built_in">echo</span> <span class="string">'sshuser:x:1000:1000:User for ssh tunnels:/var:/bin/false'</span> &gt;&gt;/etc/passwd
+<span class="built_in">echo</span> <span class="string">'sshuser:x:15020:0:99999:7:::'</span> &gt;&gt;/etc/shadow
+<span class="built_in">echo</span> <span class="string">'sshuser:x:1000:'</span> &gt;&gt;/etc/group
+passwd sshuser
+<span class="comment"># Turns out dropbear will reject (message is authpriv.warn dropbear[2378]: User 'sshuser' has invalid shell, rejected) authentication without /bin/false in /etc/shells even though it makes no sense.</span>
+<span class="built_in">echo</span> <span class="string">'/bin/false'</span> &gt;&gt; /etc/shells
+</code></pre>
+<h3 id="keywords-">Keywords:</h3>
+<p>ssh tunnel, ssh reverse tunnel, remote desktop, rdp
+defeating NAT, defeating firewall, tcp over ssh
+rdp over ssh</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

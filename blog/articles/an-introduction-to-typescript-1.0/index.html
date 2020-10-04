@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>An introduction to TypeScript 1.0 - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>An introduction to TypeScript 1.0</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>I have been using TypeScript for a while now. From 0.7 to 1.0 it changed quite a lot but I think what we have now is a stable language spec. In this post I will explore what TypeScript brings to the table over JavaScript. </p>
+<p><span class="more"></span></p>
+<p>In this post I list some general observations regarding TypeScript that I’ve found interesting and/or important to know. I skip showing/explaining the actual syntax and patterns of the language. There is a <a href="http://www.typescriptlang.org/Handbook">good guide</a> for that.</p>
+<h2 id="what-is-typescript-in-a-few-words-">What is TypeScript in a few words?</h2>
+<p>Syntax sugar and wrapper around common JavaScript patterns for better readability (classes, arrow functions) + module system(for namespaces or AMD/CommonJs modules) + static typing system + powerful, type-aware tooling = <em>Amazing developer experience.</em> At least that’s my take on it.</p>
+<h2 id="superset-of-javascript">Superset of JavaScript</h2>
+<p>TypeScript is a superset of JavaScript. What this means is that you can take any existing JavaScript code and it already is valid TypeScript. Or at least the TypeScript compiler will eat it. This is an important fact and means that all existing JavaScript libraries will work fine with your TypeScript code.</p>
+<h2 id="attempts-to-be-future-proof">Attempts to be future-proof</h2>
+<p>The added TypeScript syntax is intentionally based on specs/drafs of the future JavaScript. The intention is to bring features of the JavaScript of the future to the present. For example TypeScript implements keywords/constructs like <em>class</em>, <em>extends</em>, <em>super</em>, <em>lambda functions</em> and <em>rest parameters</em> which are all in ES6 specs. Modules are not yet clearly specified in ES6 but are implemented in TS. Yield and generators are not yet implemented in TS but the roadmap for v 2.0 is to align it closely with ES6.</p>
+<h2 id="compiles-to-idiomatic-javascript">Compiles to idiomatic javascript</h2>
+<p>The TypeScript compiler produces very clean JavaScript. In fact the output JavaScript looks so natural and clean to me that I can write TypeScript code and then debug and step through the generated JavaScript code with ease. </p>
+<h2 id="open-source">Open source</h2>
+<p>Open source and Microsoft… I know, smells fishy, but the typescript compiler really is open source. This means that anyone can fork the compiler and that there is no excuse for editors not to support it. Also, the main repo, which is owned by Microsoft is, as of version 1.0, accepting pull requests.</p>
+<h2 id="editors">Editors</h2>
+<p>Support for TypeScript in Visual Studio is of course, first class. However, other editors are catching up. The TypeScript Playground editor is very good, I would say it is as good as Visual Studio and even better because it supports writing JSDoc comments while Visual Studio does not (even with Web Essentials). However, it is impossible to do serious, multi-file development through the web editor. For non-Windows users I would recommend Eclipse with Palantir plugin because it has good support for intellisense and refactoring as well. There are many IDE’s out there which are working on TypeScript support, but are not just there yet. <a href="http://www.jetbrains.com/webstorm/">WebStorm</a>, <a href="http://jbaron.github.io/cats/">CATS</a>, <a href="http://brackets.io/">Brackets</a> with <a href="https://github.com/fdecampredon/brackets-typescript">brackets-typescript</a>, <a href="https://c9.io/">Cloud9</a> and more. </p>
+<p>##Type system
+TypeScript’s core feature is its <strong>optional</strong> typing system. When you add type annotations to your code, you get a powerful compile-time type-checking system which validates your code and disappears at runtime, leaving you with pure JavaScript.</p>
+<p>Although it might not seem at first glance, TypeScript’s type system is quite interesting and novel. 
+It is not yet-another-typed-language that compiles to JavaScript because it allows us to use types only when we want to. Traditionally in a programming language you either have types or you don’t. However, in TypesScript they are optional and you can use them only in parts of your code. This is great for old code compatibility. For example you may leave the old JavaScript code untyped but add static typing to new code that you write.</p>
+<p>TypeScript has a <strong>structural typing system</strong> which is basically <strong>duck typing</strong> at compile time (instead of runtime). In duck typing it is said that if an object quacks like a duck and looks like a duck then it is a Duck.</p>
+<p>What this means is that interfaces and classes are compared based on their structure and not their identity like for example in C#.</p>
+<p>Here is an example that demonstrates this: <img src="typescript duck typing.PNG" style="width:auto;">
+<a href="http://www.typescriptlang.org/Playground#src=interface%20Duck%20{%0A%20%20%20%20quack%3A%20%28%29%20%3D%3E%20void%3B%0A}%0A%0Avar%20quack%20%3D%20%28duck%3A%20Duck%29%20%3D%3E%20{%0A%20%20%20%20duck.quack%28%29%3B%0A}%0A%0Avar%20person%20%3D%20{%0A%20%20%20%20quack%3A%20%28%29%20%3D%3E%20console.log%28%22*Immitates%20a%20quack.*%22%29%0A}%0Avar%20duck%20%3D%20{%0A%20%20%20%20quack%3A%20%28%29%20%3D%3E%20console.log%28%22Quack!%22%29%0A}%0Avar%20snake%20%3D%20{%0A%20%20%20%20slither%3A%20%28%29%20%3D%3Econsole.log%28%22SsSsSs!%22%29%0A}%0A%0Aquack%28duck%29%3B%0Aquack%28person%29%3B%0Aquack%28snake%29%3B%20%20%20%2F%2Fsnake%20cannot%20quack%20and%20thus%20is%20not%20compatible%20with%20interface%20Duck">TypeScript Playground link</a></p>
+<h2 id="type-inference">Type inference</h2>
+<p>The type checker is very smart and will infer types whenever it can. In practice this means that you have to add only few type annotations to get useful, type-enhanced code. Sometimes the typescript compiler is able to infer types just from the definition of a variable. And these types will flow through your code via the inference mechanism. Let’s take a look at this example which is pure JavaScript:</p>
+<pre><code class="lang-javascript"><span class="keyword">var</span> cities = [<span class="string">'New York'</span>, <span class="string">'London'</span>, <span class="string">'Paris'</span>]; 
+<span class="keyword">var</span> n = cities.map(<span class="function"><span class="keyword">function</span>(<span class="params">c</span>)</span>{<span class="keyword">return</span> c.length}):
+</code></pre>
+<p>At the same time if you feed this to the <a href="http://www.typescriptlang.org/Playground#src=%0A%0Avar%20cities%20%3D%20[%27New%20York%27%2C%20%27London%27%2C%20%27Paris%27]%3B%0Avar%20n%20%3D%20cities.map%28%28c%29%3D%3Ec.length%29%3B%0A">TypeScript compiler</a>, it will be able to infer a bunch of things.</p>
+<p>In the first line, it will see that the variable ‘cities’ is being defining as an array which contains only string literals and will thus treat it as a variable of type array of strings (string[]).</p>
+<p>In the second line it will see a new variable named ‘n’ which stores whatever the .map call on cities returns. It will thus take a look if it can infer anything about that map method. And indeed it can. It knows that cities is an array of strings but it also knows all methods and their type signatures that are defined on an array, including map’s.</p>
+<p>And so it will infer that the parameter of the callback function passed to the map method has to be of type string, since the array only contains strings. And it will see that the callback returns the length of that string (a number). It will finally conclude, that the map call will return an array of numbers which will be assigned to ‘n’. ‘n’ is thus of type array of numbers (number[]).</p>
+<p>And indeed, , we get confirmation of this: <img src="typescript type inference demo.png" style="width:auto;"></p>
+<p>As a consequence we get full intellisense on the elements of array ‘n’ as can be seen in the image below: <img src="typescript type inference demo 2.png" style="width:auto;"></p>
+<p>Now that’s quite an enhancement for <strong>zero work.</strong> What we gain in this small example is intellisense on all variables and type safety. The compiler will warn us if we try to use a type in an incorrect way (but still compile the code to JavaScript).</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>All in all I would say that TypesCript implements the correct features to enable large scale application managability. The most important part is the compile time type checker and the incredible tooling that is possible to implement on its shoulders (eg. code refactoring, intellisense).</p>
+<p>There are a few quirks with the type system which are rare but can and will give you a headache if you ever stumble upon them. Also the modules system looks promising but there are some scenarios with node.js modules, where it gets tricky to integrate JavaScript modules with TypeScript ones seamlessly. I will cover both these areas in a futue post.</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

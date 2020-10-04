@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Flashing procedure for ax206 lcd photo frame with dpf-hack - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Flashing procedure for ax206 lcd photo frame with dpf-hack</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p><a href="//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_020753.jpg">
+    <img src="//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_020753_320.jpg" style="width:320px; float: left; margin-right:15px">
+</a></p>
+<p><br/><br/><br/>
+A quick summary on how to flash an ax206-based lcd photo frame with “ax-dpf” hacked firmware.</p>
+<div style="display: block; clear: both;"></div>
+
+<p><span class="more"></span></p>
+<h1 id="prerequisites">Prerequisites</h1>
+<p><a href="//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_020904.jpg">
+    <img src="//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_020904_320.jpg" style="width:320px;">
+</a></p>
+<ul>
+<li>AX206 based LCD photo frame</li>
+<li>linux (in my case default <strong>Kali Linux 1.0.9</strong> VMware 64 bit (amd64) image hosted on windows 8.1 x64)</li>
+</ul>
+<h1 id="procedure">Procedure</h1>
+<h2 id="compile-firmware">Compile firmware</h2>
+<p><a href="/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/dpf-ax-code.zip">mirror in case svn disappears</a></p>
+<pre><code class="lang-bash">svn checkout svn://svn.code.sf.net/p/dpf-ax/code/trunk dpf-ax-code
+<span class="built_in">cd</span> dpf-ax-code
+make all
+</code></pre>
+<p>In best case scenario, that will build firmware images without problems (it also compiles lcd4linux along the way). I encountered a few problems and fixed them with:</p>
+<ol>
+<li>automake needed:<pre><code class="lang-bash">apt-get install automake
+</code></pre>
+</li>
+<li><p>missing or wrong (too new from apt-get) version of sdcc (2.9 is required):
+Download source from <a href="http://sourceforge.net/projects/sdcc/files/sdcc-linux-x86/2.9.0/">http://sourceforge.net/projects/sdcc/files/sdcc-linux-x86/2.9.0/</a> or <a href="/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/sdcc-2.9.0-i386-unknown-linux2.5.tar.bz2">from mirror</a>.</p>
+<pre><code class="lang-bash">tar xjf sdcc-<span class="number">2.9</span>.<span class="number">0</span>-i386-unknown-linux2.<span class="number">5</span>.tar.bz2
+cp -r sdcc/bin /usr/<span class="built_in">local</span>
+cp -r sdcc/share /usr/<span class="built_in">local</span>
+</code></pre>
+</li>
+<li><p>“ImportError: No module named intelhex” in compile.py:
+Download <a href="http://www.bialix.com/intelhex/intelhex-1.5.zip">http://www.bialix.com/intelhex/intelhex-1.5.zip</a> or <a href="/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/intelhex-1.5.zip">mirrored</a>.</p>
+<pre><code class="lang-bash">python setup.py install
+</code></pre>
+</li>
+</ol>
+<p>Now “make all” completes without errors.</p>
+<h2 id="identify-device">Identify device</h2>
+<p>Connect the lcd photo frame to the PC and enable usb mode in the photo frame menu (Menu-&gt;Usb connect-&gt;Yes).
+In my case /dev/sg2 and /dev/sr1 show up, this is the output of dmesg:</p>
+<pre><code class="lang-bash">[ <span class="number">4895.605593</span>] usb <span class="number">1</span>-<span class="number">2.2</span>: new full-speed USB device number <span class="number">12</span> using uhci_hcd
+[ <span class="number">4895.977180</span>] usb <span class="number">1</span>-<span class="number">2.2</span>: New USB device found, idVendor=<span class="number">1908</span>, idProduct=<span class="number">0102</span>
+[ <span class="number">4895.977186</span>] usb <span class="number">1</span>-<span class="number">2.2</span>: New USB device strings: Mfr=<span class="number">2</span>, Product=<span class="number">3</span>, SerialNumber=<span class="number">1</span>
+[ <span class="number">4895.977189</span>] usb <span class="number">1</span>-<span class="number">2.2</span>: Product: Digital Photo Frame
+[ <span class="number">4895.977191</span>] usb <span class="number">1</span>-<span class="number">2.2</span>: Manufacturer: BUILDWIN
+[ <span class="number">4895.977193</span>] usb <span class="number">1</span>-<span class="number">2.2</span>: SerialNumber: <span class="number">200807101900000000</span>
+[ <span class="number">4896.002072</span>] usb-storage <span class="number">1</span>-<span class="number">2.2</span>:<span class="number">1.0</span>: USB Mass Storage device detected
+[ <span class="number">4896.002346</span>] scsi5 : usb-storage <span class="number">1</span>-<span class="number">2.2</span>:<span class="number">1.0</span>
+[ <span class="number">4897.020217</span>] scsi <span class="number">5</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>: CD-ROM            buildwin  Photo Frame     <span class="number">1.01</span> PQ: <span class="number">0</span> ANSI: <span class="number">2</span>
+[ <span class="number">4897.036154</span>] sr1: scsi3-mmc drive: <span class="number">40</span>x/<span class="number">40</span>x writer <span class="built_in">cd</span>/rw xa/form2 cdda tray
+[ <span class="number">4897.036771</span>] sr <span class="number">5</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>: Attached scsi CD-ROM sr1
+[ <span class="number">4897.037868</span>] sr <span class="number">5</span>:<span class="number">0</span>:<span class="number">0</span>:<span class="number">0</span>: Attached scsi generic sg2 <span class="built_in">type</span> <span class="number">5</span>
+</code></pre>
+<pre><code class="lang-bash">root@kali:~/Desktop/dpf-ax-code/tools<span class="comment"># python identify.py /dev/sr1</span>
+Detecting &amp; reading dpf flash...
+Opening generic SCSI device <span class="string">'/dev/sr1'</span>
+Manufacturer: Macronix
+Size        : <span class="number">2</span> MB
+Reading <span class="number">200000</span> bytes from flash...
+Flash written to file <span class="string">'fulldump_20141101-194435.bin'</span>.
+
+Looking <span class="keyword">for</span> firmware.............: Found (buildwin, <span class="number">320</span>x240 px).
+Looking <span class="keyword">for</span> Openwin..............: Found.
+Looking <span class="keyword">for</span> L<span class="built_in">cd</span>IniTbl............: Found.
+Looking <span class="keyword">for</span> backlight &amp; contrast.: Found, Found.
+Looking <span class="keyword">for</span> known signatures.....: Found.
+
+Your dpf is compatible with model [<span class="string">'taobao'</span>].
+</code></pre>
+<p>Ah-ha! Our device corresponds to profile/image named ‘<strong>taobao</strong>‘.</p>
+<p>Or you can do it in two steps:</p>
+<pre><code class="lang-bash">root@kali:~/Desktop/dpf-ax-code/tools<span class="comment"># python fulldump.py /dev/sr1</span>
+Opening generic SCSI device <span class="string">'/dev/sr1'</span>
+Manufacturer: Macronix
+Size        : <span class="number">2</span> MB
+Reading <span class="number">200000</span> bytes from flash...
+Flash written to file <span class="string">'fulldump_20141101-194631.bin'</span>.
+
+root@kali:~/Desktop/dpf-ax-code/tools<span class="comment"># python identify.py fulldump_20141101-194631.bin</span>
+Looking <span class="keyword">for</span> firmware.............: Found (buildwin, <span class="number">320</span>x240 px).
+Looking <span class="keyword">for</span> Openwin..............: Found.
+Looking <span class="keyword">for</span> L<span class="built_in">cd</span>IniTbl............: Found.
+Looking <span class="keyword">for</span> backlight &amp; contrast.: Found, Found.
+Looking <span class="keyword">for</span> known signatures.....: Found.
+
+Your dpf is compatible with model [<span class="string">'taobao'</span>].
+</code></pre>
+<h2 id="flashing-hacked-firmware">Flashing hacked firmware</h2>
+<pre><code class="lang-bash">root@kali:~/Desktop/dpf-ax-code/tools<span class="comment"># python restore.py ../src/fw_taobao.bin -f</span>
+Found AX206 DPF
+Error: Failed to claim usb device!
+Possibly you have to detach the device from hid.
+Use hiddetach from the fw folder: <span class="string">'sudo fw/hiddetach'</span>
+                       or libhid: <span class="string">'sudo libhid-detach-device 1908:3318'</span>
+Traceback (most recent call last):
+  File <span class="string">"restore.py"</span>, line <span class="number">25</span>, <span class="keyword">in</span> &lt;module&gt;
+    d = dpf.open(<span class="string">"usb0"</span>)
+SystemError: Failed to open port:
+Unknown error
+</code></pre>
+<p>We need to enter bootloader mode. Press and hold the reset button, press and hold the menu button, release reset button, wait a second and release menu. The screen should be blank(black) but the device should be detectable via usb.</p>
+<pre><code class="lang-bash">root@kali:~/Desktop/dpf-ax-code/tools<span class="comment"># ./hiddetach </span>
+Detaching dpf at <span class="number">1</span>-<span class="number">2.2</span>:<span class="number">1.0</span>... done.
+
+root@kali:~/Desktop/dpf-ax-code/tools<span class="comment"># python restore.py ../src/fw_taobao.bin -f</span>
+Found AX206 DPF (bootloader)
+Manufacturer: Macronix
+Size        : <span class="number">2</span> MB
+Erase full flash...
+Flashing sector <span class="number">0</span>...
+Flashing sector <span class="number">1</span>...
+Flashing sector <span class="number">2</span>...
+Flashing sector <span class="number">3</span>...
+Flashing sector <span class="number">4</span>...
+Flashing sector <span class="number">5</span>...
+Executing applet..
+</code></pre>
+<p>That’s it. Now you should see a new splash screen together with new menus.</p>
+<p>Now you can use lcd4linux to display all sorts of data on it.</p>
+<p><a href="//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_214045_downsized.png">
+    <img src="//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_214045_downsized_320.png" style="width:320px;">
+</a></p>
+<h1 id="compiling-lcd4linux-with-dpf-driver-on-beaglebone-black">Compiling lcd4linux with dpf driver on BeagleBone Black</h1>
+<p>Tested on debian console img (debian-7.7-console-armhf-2014-10-29).</p>
+<pre><code class="lang-bash">sudo apt-get install subversion make automake gcc libusb-dev python-dev pkg-config autoconf gettext libtool libjpeg62-dev
+sudo ln <span class="operator">-s</span> /usr/bin/aclocal /usr/bin/aclocal-<span class="number">1.14</span>
+sudo ln <span class="operator">-s</span> /usr/bin/automake /usr/bin/automake-<span class="number">1.14</span>
+svn checkout svn://svn.code.sf.net/p/dpf-ax/code/trunk dpf-ax-code
+<span class="built_in">cd</span> dpf-ax-code
+mkdir lcd4linux
+mkdir lcd4linux/m4
+<span class="built_in">cd</span> lcd4linux
+autoreconf -fvi
+<span class="built_in">cd</span> ..
+make all
+</code></pre>
+<p>It will fail to compile firmware images because it needs sdcc2.9 but it does not matter because those can be prepared on another machine, we only only need to compile lcd4linux and dpf driver to use a DPF frame on the beaglebone.
+lcd4linux should be run with sudo and make sure the config is chowned to root:root and chmoded to 700.</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

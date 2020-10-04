@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Randomizing guest wifi password with OpenWrt and a hacked digital photo frame - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Randomizing guest wifi password with OpenWrt and a hacked digital photo frame</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p><a href="//pingec.si/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/IMG_20130819_225553.jpg">
+    <img src="//pingec.si/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/IMG_20130819_225553_320.jpg" style="width:320px; float: right;">
+</a></p>
+<p>Let’s implement a guest wifi with passwords that change periodically (eg. every 24hours) and via a button press. Let’s display the current password on an LCD. This comes handy when you want to provide wifi access only to clients that are physically present in your lounge for that day and prevent password leaks and massive wifi sharing to all the buildings nearby.</p>
+<p><span class="more"></span></p>
+<video width="80%" controls>
+  <source src="VID_20130819_225724.mp4" type="video/mp4" preload="none">
+  Your browser does not support the video tag.
+</video>
+
+<h1 id="prerequisites-">Prerequisites:</h1>
+<h2 id="1-components-needed-">1. Components needed:</h2>
+<ul>
+<li>A router running OpenWrt with a USB port (eg. <a href="http://wiki.openwrt.org/toh/tp-link/tl-wr1043nd" title="Title">TP-Link TL-WR1043ND</a>)</li>
+<li>A USB DPF that can be hacked with the <a href="http://picframe.spritesserver.nl/wiki/index.php/DPF_with_AppoTech_AX206">“DPF-hack”</a></li>
+</ul>
+<h2 id="2-flash-the-dpf-with-custom-firmware-all-details-are-available-here-http-picframe-spritesserver-nl-wiki-index-php-dpf_with_appotech_ax206-hacking_details-">2. Flash the DPF with custom firmware, all details are available <a href="http://picframe.spritesserver.nl/wiki/index.php/DPF_with_AppoTech_AX206#Hacking_Details">here</a></h2>
+<p>Update: I have described the procedure in detail in a blog post as well. The post can be found <a href="//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/"><strong>here</strong></a></p>
+<h1 id="installing-the-lcd4linux-with-dpf-on-openwrt">Installing the lcd4linux with DPF on OpenWrt</h1>
+<p>There are multiple options:</p>
+<p>You can try with…</p>
+<pre><code class="lang-bash">opkg update
+opkg list | grep -E <span class="string">"dpf|lcd4linux"</span>
+</code></pre>
+<p>And see if anything good shows up. From memory, there might be a “lcd4linux-dpf” package but at some point in time I believe that the changes were added to “lcd4linux-custom”. Doing “dpkg info lcd4linux-custom” does indeed list “libdpf” as a dependency, which is a good sign that the package will work with your hacked dpf device.</p>
+<p>If you are less lucky and cannot get a working package, if you have an ar71xx platform device like me, then you can download a prebuilt package from <a href="http://dl.dropbox.com/u/55682296/openwrt/lcd4linux/openwrt-dpf_r1184-2.tar.bz2">here</a> or <a href="/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/lcd4linux-dpf_r1184-2_ar71xx_MPD2.ipk">mirror</a></p>
+<p>If you are even less lucky and run a different build target then you will have to build your own package from lcd4linux and and latest dpflib. Start digging <a href="https://forum.openwrt.org/viewtopic.php?id=34133">here</a> for instructions.</p>
+<p>Once the correct package is located, install it with the usual</p>
+<pre><code class="lang-bash">opkg install path_to_package
+</code></pre>
+<p>Now, /etc/lcd4linux.config needs to be replaced with <a href="/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/lcd4linux.config">this one</a>. The first section might need some customization to get it working but it is all self-explanatory.</p>
+<p>The <a href="/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/lcd4linux">/etc/init.d/lcd4linux</a> init script should be edited as well, the -o and -q options should be commented out.</p>
+<p>Now lcd4linux can be run with “/etc/init.d/lcd4linux start” and that’s that.</p>
+<h1 id="password-reset-script">Password reset script</h1>
+<p>A script that changes wifi password with a random value and restarts the wifi is pasted below.</p>
+<h2 id="-usr-bin-wifipass-sh">/usr/bin/wifipass.sh</h2>
+<pre><code class="lang-bash"><span class="shebang">#!/bin/sh
+</span>
+KEY=$(head /dev/urandom | tr -dc <span class="string">"0123456789"</span> | cut -c <span class="number">1</span>-<span class="number">8</span>)
+
+uci <span class="built_in">set</span> wireless.@wifi-iface[<span class="number">0</span>].key=<span class="variable">$KEY</span>
+uci commit wireless
+
+logger wifi pass changed to <span class="variable">$KEY</span> 
+
+wifi
+</code></pre>
+<p>A cron job that calls this script every 24hours can now be setup (an exercise for the reader).</p>
+<h1 id="button">Button</h1>
+<p>Also it is useful if the device owner can manually trigger a password change. This can be achieved by adding the following section to /etc/config/system:</p>
+<pre><code class="lang-bash">config button
+    option action <span class="string">'pressed'</span>
+    option button <span class="string">'wps'</span>
+    option handler <span class="string">'logger wps pressed, resetting wifi pass; /usr/bin/wifipass.sh'</span>
+</code></pre>
+<p>or with uci syntax:</p>
+<pre><code class="lang-bash">uci add system button    
+uci <span class="built_in">set</span> system.@button[-<span class="number">1</span>].button=wps
+uci <span class="built_in">set</span> system.@button[-<span class="number">1</span>].action=pressed
+uci <span class="built_in">set</span> system.@button[-<span class="number">1</span>].handler=<span class="string">'logger wps pressed, resetting wifi pass; /usr/bin/wifipass.sh'</span>
+uci commit system
+</code></pre>
+<p>To identify the desired button’s internal name and action (in this case “wps” and “pressed”), the following script should be saved as /etc/hotplug.d/button/buttons. When the button is pressed, name and action will be logged.</p>
+<pre><code class="lang-bash"><span class="shebang">#!/bin/sh</span>
+logger <span class="variable">$BUTTON</span>
+logger <span class="variable">$ACTION</span>
+</code></pre>
+<h1 id="other-relevant-sources">Other relevant sources</h1>
+<p><a href="http://www.vdr-portal.de/board18-vdr-hardware/board11-lcds/p1043999-pearl-display-textskalierung-unter-lcd4linux/">http://www.vdr-portal.de/board18-vdr-hardware/board11-lcds/p1043999-pearl-display-textskalierung-unter-lcd4linux/</a>
+<a href="http://flux242.blogspot.com/2012/02/digital-picture-frame-as-router-status.html">http://flux242.blogspot.com/2012/02/digital-picture-frame-as-router-status.html</a>
+<a href="http://sourceforge.net/p/dpf-ax/code/48/tree/">http://sourceforge.net/p/dpf-ax/code/48/tree/</a>
+<a href="https://forum.openwrt.org/viewtopic.php?id=34133&amp;p=3">https://forum.openwrt.org/viewtopic.php?id=34133&amp;p=3</a>
+<a href="http://forum.doozan.com/read.php?9,9915,10788,quote=1">http://forum.doozan.com/read.php?9,9915,10788,quote=1</a>
+<a href="http://picframe.spritesserver.nl/wiki/index.php/DPF_with_AppoTech_AX206">http://picframe.spritesserver.nl/wiki/index.php/DPF_with_AppoTech_AX206</a></p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

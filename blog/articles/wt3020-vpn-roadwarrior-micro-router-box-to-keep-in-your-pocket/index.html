@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>WT3020 vpn roadwarrior micro router box to keep in your pocket - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>WT3020 vpn roadwarrior micro router box to keep in your pocket</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p><a href="//pingec.si/blog/articles/wt3020-vpn-roadwarrior-micro-router-box-to-keep-in-your-pocket/IMG_20150111_221819.jpg">
+    <img src="//pingec.si/blog/articles/wt3020-vpn-roadwarrior-micro-router-box-to-keep-in-your-pocket/IMG_20150111_221819_320.jpg" style="width:320px; float: left; margin-right:15px">
+</a></p>
+<p>Configuration recipe for <a href="http://wiki.openwrt.org/toh/nexx/wt3020">NEXX WT3020H</a> micro router as a vpn roadwarrior setup. This guide involves two OpenWrt devices both running OpenVpn with SSL, one in client and one in server mode. In this case WT3020 as the client and WDR3600 as server. The WT3020 device is a perfect candidate for such use case. It is cheap, very small and can be powered via any micro USB charger. Perfect for taking on business trips, vacations and so on.</p>
+<div style="display: block; clear: both;"></div>
+
+<p><span class="more"></span></p>
+<p>On the client side (WT3020), wlan and lan internet traffic will be routed through the vpn tunnel thus making a vpn tunnel establishment as easy as plugging the WT3020’s WAN port into any dhcp-enabled LAN with internet access. The tunnel uses tcp protocol over port 443 since this outbound port is usually not blocked by firewalls. </p>
+<p>The purpose of this setup is to provide:</p>
+<ul>
+<li>a tunnel with the purpose of encrypting the traffic,</li>
+<li>allowing apps (Skype, Hangouts, Steam) to connect to the internet regardless of how the firewall of the network we are a guest at is configured.</li>
+</ul>
+<p><strong>This setup does not bridge lan subnets on both end points. It only provides an encrypted tunnel that acts as a gateway for internet traffic.</strong></p>
+<p><img src="//pingec.si/blog/articles/wt3020-vpn-roadwarrior-micro-router-box-to-keep-in-your-pocket/openvpn-tunnel-diagram.PNG"></p>
+<h1 id="prerequisites">Prerequisites</h1>
+<ul>
+<li>NEXX WT3020 with <strong>8MB flash</strong>, running OpenWrt <a href="http://downloads.openwrt.org/snapshots/trunk/ramips.mt7620/">(grab it here)</a> also see <a href="http://snakelab.cc/2014/12/05/howto_flash_openwrt_on_wt3020.html"><del>Howto flash instructions</del></a> edit: apparently the image can now be flashed directly via web interface without physically opening the device.</li>
+<li>Another OpenWrt device running OpenVpn server (in this case WDR3600)</li>
+</ul>
+<h1 id="openvpn-server-setup-wdr3600-">OpenVpn Server Setup (wdr3600)</h1>
+<h2 id="install-openvpn-about-1-5mb-of-space-required-">install OpenVpn (about 1.5MB of space required)</h2>
+<pre><code class="lang-bash">opkg update; opkg install openvpn-openssl openvpn-easy-rsa
+</code></pre>
+<h2 id="generate-ca-keys-and-certs-last-command-takes-a-while-">Generate CA, keys and certs (last command takes a while)</h2>
+<pre><code class="lang-bash"><span class="built_in">source</span> /etc/easy-rsa/vars
+clean-all
+pkitool --initca
+pkitool --server my-server
+pkitool wt3020-client
+build-dh
+</code></pre>
+<h2 id="copy-generated-ca-cert-server-keys-and-diffie-hellman-parameters-to-where-openvpn-expects-them">Copy generated CA cert, server keys and Diffie-Hellman parameters to where OpenVpn expects them</h2>
+<pre><code class="lang-bash"><span class="built_in">cd</span> <span class="variable">$KEY_DIR</span>
+mkdir -p /etc/openvpn
+cp ca.crt my-server.* dh*.pem  /etc/openvpn/
+</code></pre>
+<h2 id="ca-key-can-now-be-moved-to-some-safe-place-it-is-only-needed-for-generating-new-keys">ca.key can now be moved to some safe place, it is only needed for generating new keys</h2>
+<h2 id="-etc-config-network">/etc/config/network</h2>
+<p>Append the following section:</p>
+<pre><code class="lang-bash">config interface <span class="string">'vpn0'</span>
+        option ifname <span class="string">'tun0'</span>
+        option proto <span class="string">'none'</span>
+</code></pre>
+<p>Reload network config</p>
+<pre><code class="lang-bash">/etc/init.d/network reload
+</code></pre>
+<h2 id="-etc-config-firewall">/etc/config/firewall</h2>
+<p>Append the following sections:</p>
+<pre><code class="lang-bash"><span class="comment">#config rule</span>
+<span class="comment">#        option name 'Allow-OpenVPN-Inbound'</span>
+<span class="comment">#        option target 'ACCEPT'</span>
+<span class="comment">#        option src '*'</span>
+<span class="comment">#        option proto 'udp'</span>
+<span class="comment">#        option dest_port '1194'</span>
+
+config rule
+        option name <span class="string">'Allow-OpenVPN-443tcp-Inbound'</span>
+        option target <span class="string">'ACCEPT'</span>
+        option src <span class="string">'*'</span>
+        option proto <span class="string">'tcp'</span>
+        option dest_port <span class="string">'443'</span>
+
+config zone
+        option name <span class="string">'vpn'</span>
+        option input <span class="string">'ACCEPT'</span>
+        option forward <span class="string">'ACCEPT'</span>
+        option output <span class="string">'ACCEPT'</span>
+        option network <span class="string">'vpn0'</span>
+
+config forwarding
+        option src <span class="string">'vpn'</span>
+        option dest <span class="string">'wan'</span>
+</code></pre>
+<p>Reload firewall config</p>
+<pre><code class="lang-bash">/etc/init.d/firewall reload
+</code></pre>
+<h2 id="-etc-config-openvpn">/etc/config/openvpn</h2>
+<pre><code class="lang-bash">config openvpn <span class="string">'myvpn'</span>
+        option enabled <span class="string">'1'</span>
+        option dev <span class="string">'tun'</span>
+        option proto <span class="string">'tcp'</span>
+        option <span class="built_in">log</span> <span class="string">'/tmp/openvpn.log'</span>
+        option verb <span class="string">'3'</span>
+        option ca <span class="string">'/etc/openvpn/ca.crt'</span>
+        option cert <span class="string">'/etc/openvpn/my-server.crt'</span>
+        option key <span class="string">'/etc/openvpn/my-server.key'</span>
+        option server <span class="string">'10.8.0.0 255.255.255.0'</span>
+        option port <span class="string">'443'</span>
+        option keepalive <span class="string">'10 120'</span>
+        option dh <span class="string">'/etc/openvpn/dh2048.pem'</span>
+        option push <span class="string">'redirect-gateway def1'</span>
+</code></pre>
+<h2 id="run-openvpn-server">Run OpenVpn server</h2>
+<pre><code class="lang-bash">/etc/init.d/openvpn <span class="built_in">enable</span>
+/etc/init.d/openvpn start
+</code></pre>
+<h1 id="openvpn-client-setup-wt3020-">OpenVpn Client Setup (wt3020)</h1>
+<h2 id="install-openvpn">Install OpenVpn</h2>
+<pre><code class="lang-bash">opkg update; opkg install openvpn-openssl
+</code></pre>
+<h2 id="transfer-client-keys-to-from-your-server-device-to-your-client-device-nexx-wt3020-then-on-the-client-">Transfer client keys to from your server device to your client device (NEXX WT3020) then on the client:</h2>
+<pre><code class="lang-bash">cp ca.crt wt3020-client.*          /etc/openvpn/     <span class="comment">## this is done on wt3020 (the openvpn client device)</span>
+</code></pre>
+<h2 id="-etc-config-network">/etc/config/network</h2>
+<p>Append the following section:</p>
+<pre><code class="lang-bash">config interface <span class="string">'vpn0'</span>
+        option ifname <span class="string">'tun0'</span>
+        option proto <span class="string">'none'</span>
+</code></pre>
+<p>Reload network config</p>
+<pre><code class="lang-bash">/etc/init.d/network reload
+</code></pre>
+<h2 id="-etc-config-firewall">/etc/config/firewall</h2>
+<p>Change the following section:</p>
+<pre><code class="lang-bash">config forwarding
+        option src <span class="string">'lan'</span>
+        option dest <span class="string">'wan'</span>
+</code></pre>
+<p>To this:</p>
+<pre><code class="lang-bash">config forwarding
+        option src <span class="string">'lan'</span>
+        option dest <span class="string">'vpn'</span>
+</code></pre>
+<p><strong>Note: this step is missing in the official OpenWrt guide (see link at bottom), but is necessary.</strong></p>
+<p>Also whenever you want to bypass the vpn, simply change the above option from ‘vpn’ back to ‘wan’, reload firewall and network or if you want to make it permanent, disable OpenVpn and reboot.</p>
+<p>Append the following sections:</p>
+<pre><code class="lang-bash">config zone
+        option name <span class="string">'vpn'</span>
+        option input <span class="string">'ACCEPT'</span>
+        option forward <span class="string">'ACCEPT'</span>
+        option output <span class="string">'ACCEPT'</span>
+        option network <span class="string">'vpn0'</span>
+        option masq <span class="string">'1'</span>
+</code></pre>
+<p><strong>Note: ip masquerading is enabled. This option is missing in the official OpenWrt guide (see link at bottom), but is necessary.</strong></p>
+<p>Reload firewall config</p>
+<pre><code class="lang-bash">/etc/init.d/firewall reload
+</code></pre>
+<h2 id="-etc-config-openvpn">/etc/config/openvpn</h2>
+<pre><code class="lang-bash">config openvpn <span class="string">'myvpn'</span>
+        option enabled <span class="string">'1'</span>
+        option dev <span class="string">'tun'</span>
+        option proto <span class="string">'tcp'</span>
+        option <span class="built_in">log</span> <span class="string">'/tmp/openvpn.log'</span>
+        option verb <span class="string">'3'</span>
+        option ca <span class="string">'/etc/openvpn/ca.crt'</span>
+        option cert <span class="string">'/etc/openvpn/wt3020-client.crt'</span>
+        option key <span class="string">'/etc/openvpn/wt3020-client.key'</span>
+        option client <span class="string">'1'</span>
+        option remote_cert_tls <span class="string">'server'</span>
+        option remote <span class="string">'xxx.xxx.xxx.xxx 443'</span>
+</code></pre>
+<p>Where xxx.xxx.xxx.xxx is the public IP address of your OpenVpn server.</p>
+<h2 id="run-openvpn-client">Run OpenVpn client</h2>
+<pre><code class="lang-bash">/etc/init.d/openvpn <span class="built_in">enable</span>
+/etc/init.d/openvpn start
+</code></pre>
+<p>You should soon be able to ping the OpenVpn server (10.8.0.1) and traffic should all be routed through it</p>
+<pre><code class="lang-bash">ping -c4 <span class="number">10.8</span>.<span class="number">0.1</span>
+traceroute <span class="number">8.8</span>.<span class="number">8.8</span>
+</code></pre>
+<p>If problems arise check the log in /tmp/openvpn.log for hints.</p>
+<p>Adapted from <a href="http://wiki.openwrt.org/doc/howto/vpn.openvpn">OpenWrt wiki</a> </p>
+<h1 id="bonus-making-it-work-in-china">Bonus: making it work in China</h1>
+<p>A friend reported to me that OpenVpn communication does not seem to work in China. However, ssh does seem to work fine at this time (January 2015) so we decided to tunnel the vpn tunnel over a ssh tunnel.</p>
+<p>Create a ssh tunnel:</p>
+<pre><code class="lang-bash">ssh -L <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6666</span>:OVpnServerIP:<span class="number">443</span> <span class="operator">-l</span> sshUser SshServerIP
+</code></pre>
+<p>In OpenVpn client config replace</p>
+<pre><code class="lang-bash">option remote OVpnServerIP <span class="number">443</span>
+</code></pre>
+<p>with:</p>
+<pre><code class="lang-bash">option remote <span class="number">127.0</span>.<span class="number">0.1</span> <span class="number">6666</span>
+</code></pre>
+<p>OVpnServerIP and SshServerIP can be the same machine.</p>
+<h1 id="bonus-2-adding-a-dumb-ap-option">Bonus 2: Adding a “Dumb AP” option</h1>
+<p>Turns out there is interest for another use case for this little device. And that is acting as a dumb AP by plugging it into an ethernet port of a network and allowing access over wifi to that network (same subnet).
+This can be done without breaking our tunnelling configuration by simply creating an additional wifi interface with a different SSID and bridging it to wan.</p>
+<p>In /etc/config/network under the</p>
+<pre><code class="lang-bash">config interface <span class="string">'wan'</span>
+</code></pre>
+<p>add the line:</p>
+<pre><code class="lang-bash">option <span class="built_in">type</span> <span class="string">'bridge'</span>
+</code></pre>
+<p>In /etc/config/wireless create a new interface and bridge it to wan by adding the following section:</p>
+<pre><code class="lang-bash">config wifi-iface
+        option device <span class="string">'radio0'</span>
+        option network <span class="string">'wan'</span>
+        option mode <span class="string">'ap'</span>
+        option ssid <span class="string">'DumbAP'</span>
+        option encryption <span class="string">'psk2'</span>
+        option key <span class="string">'mysuperpassword'</span>
+</code></pre>
+<p>Then type</p>
+<pre><code class="lang-bash">/etc/init.d/network/reload
+wifi
+</code></pre>
+<p>And it should start working (if not, try reboot).</p>
+<p>Now you can use the default wifi for tunnelled connections to the internet and accessing the router for configuration purposes and the secondary wifi for accessing the network that the wan port attaches to.</p>
+<h1 id="keywords">Keywords</h1>
+<p>Openwrt, OpenVpn tunnel, Firewall tunnel, SSL tunnel, nexx wt3020.</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

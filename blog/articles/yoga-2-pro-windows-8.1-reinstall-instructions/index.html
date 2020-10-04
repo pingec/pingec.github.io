@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Lenovo Yoga 2 Pro Windows 8.1 reinstall notes - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Lenovo Yoga 2 Pro Windows 8.1 reinstall notes</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>I decided to get rid of the Lenovo bloatware, which had come preinstalled on my Lenovo Yoga 2 Pro and to reclaim space used by recovery partitions. Here is the recipe for a fresh install of Windows 8.1 with the OEM product key.</p>
+<p><span class="more"></span></p>
+<p>Note: The “wipe all partitions” steps are not optional, the installer will refuse to install on the original ones stating some GPT error.</p>
+<h2 id="steps-">Steps:</h2>
+<ol>
+<li><p>Obtain a Windows 8 ISO. This is not an easy feat if you only have an OEM product key. Not Microsoft nor Lenovo will help you. I used a RETAIL product key to download the ISO from Microsoft: <a href="http://windows.microsoft.com/en-gb/windows-8/upgrade-product-key-only">http://windows.microsoft.com/en-gb/windows-8/upgrade-product-key-only</a></p>
+</li>
+<li><p>Apply the downloaded ISO to a USB flash drive and make it bootable. You can use an utility like <a href="http://rufus.akeo.ie/">Rufus</a>.</p>
+</li>
+<li><p>Shut down Windows 8, wait for power button led to go blank. Boot up the ultrabook via the NOVO button (the tiny round one next to the power button).</p>
+</li>
+<li><p>“Novo Button Menu” shows up. Go to “Bios Setup”-&gt;”Boot”-&gt;”Boot Mode” and set it to “Legacy Support”, also make sure “USB Boot” is enabled (should be by default).</p>
+</li>
+<li><p>Go to “Exit”-&gt;”Exit Saving Changes”. Now uefi will boot original Windows from hdd again.</p>
+</li>
+<li><p>Repeat step 3 to get into “Novo Button Menu” again.</p>
+</li>
+<li><p>Go to “Boot Menu” and select whatever your USB device is called, Windows 8.1 installer will boot.</p>
+</li>
+<li><p>Installation setup will not prompt you for a product key, it will be read from the UEFI automagically.</p>
+</li>
+<li><p>When at the partition table menu there will be a lot of partition, wipe them all (yes even the lenovo recovery and driver ones). Press Fn+Shift+F10 and use diskpart to wipe the partition table. Last line is optional.</p>
+<pre><code> diskpart
+ select disk 0
+ clean
+ convert GPT
+</code></pre></li>
+<li><p>Smooth sailing from this point on… All drivers can be downloaded from the Lenovo website.</p>
+</li>
+</ol>
+<p><img src="/blog/articles/yoga-2-pro-windows-8.1-reinstall-instructions/fresh%20Ytoga%202%20Pro.png" alt="yoga 2 pro fresh install desktop">
+<img src="/blog/articles/yoga-2-pro-windows-8.1-reinstall-instructions/disk%20space.PNG" alt=""></p>
+<h2 id="other-tweaks">Other tweaks</h2>
+<p>Disable indexing while running on battery power:</p>
+<pre><code>1) Launch mmc (Win+R, &quot;mmc&quot;)
+2) File -&gt; Add/Remove Snap-In
+3) Group Policy Object Editor -&gt; Add -&gt; Local Computer -&gt; Ok
+4) Expand Local Computer Policy -&gt; Computer Configuration -&gt; Administrative Templates -&gt; Windows Components -&gt; Search
+5) Find &quot;Prevent indexing when running on battery power to conserve energy&quot;
+6) Enable -&gt; OK -&gt; Close
+</code></pre></section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

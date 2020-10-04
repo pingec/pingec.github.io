@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>msysgit, sourcetree and long paths (&gt;260 chars) - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>msysgit, sourcetree and long paths (&gt;260 chars)</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>Using git on Windows is usually a pleasant experience, but not always. It is not a secret that Windows has problems with file paths which are <a href="http://support.thoughtworks.com/entries/20628041-Git-checkout-fails-on-Windows-when-path-length-is-too-long-">longer than 260 chars</a>. There are <a href="http://msdn.microsoft.com/en-us/library/aa365247%28v=vs.85%29.aspx#maxpath">workarounds</a> but they have to be implemented in the application.</p>
+<p><span class="more"></span></p>
+<p>With msysgit 1.7.9 installed some very weird things were happening to me.</p>
+<p>From the screenshot below, three things can be noticed: msysgit and sourcetree were detecting a lot of files (which had suspicously long paths) as deleted although they were not. And interestingly, when I staged the deletion of such a file in sourcetree, the file reappeared as untracked which is very odd behavior. </p>
+<p><a href="weird2.png">
+<img src="/blog/articles/msysgit-longpath/weird2.png" alt="screenshot">
+</a></p>
+<p>I tried the same test with cygwin’s git and there, everything worked as I would have expected it to (no deleted files).</p>
+<p>I would have left it at that and used cygwin from that point on, were it not for sourcetree using msysgit under the hood resulting in being broken as well.</p>
+<p>Luckily, there is a fix:</p>
+<ol>
+<li>Download and install <a href="http://git-scm.com/download/win">msysgit v. 1.9.0 or higher</a></li>
+<li>enable longpaths with ‘git config core.longpaths true’</li>
+</ol>
+<p>After installing msysgit 1.9.0 there is an immediate improvement as now msysgit now warns you about the specific problem with “Filename too long” warnings instead of acting crazy like it was before. </p>
+<p><a href="weird3.PNG">
+<img src="/blog/articles/msysgit-longpath/weird3.PNG" alt="screenshot2">
+</a></p>
+<p>And after you turn on longpaths with </p>
+<blockquote>
+<p>‘git config core.longpaths true’</p>
+</blockquote>
+<p>all the warnings disappear and sourcetree works fine again…</p>
+<p><strong>Update</strong>
+When using SourceTree you should also make sure that SourceTree is using the System’s Git and not the embedded one. Tools-&gt;Options-&gt;Git-&gt;”Use System Git” button and point it to the correct git.exe. 
+In my case the path was “C:\Users\username\AppData\Local\Programs\Git\cmd\git.exe”</p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

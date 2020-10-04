@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Git over ssh tunnel - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>Git over ssh tunnel</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><p>This is a short recipe on how to access a git repository through a shh tunnel. </p>
+<p><span class="more"></span></p>
+<p>In this scenario, we have ssh access to remoteserver.corporation1.com. </p>
+<p>We want to access a on gitserver.corporation2.com from remoteserver.corporation1.com, the two machines cannot connect to eachother directly in any way.</p>
+<h2 id="solution">Solution</h2>
+<p>Since we can connect to both remoteserver.corporation1.com and gitserver.corporation2.com from our desktop machine,
+we will establish a ssh tunnel from remoteserver.corporation1.com to gitserver.corporation2.com over our desktop machine.</p>
+<h3 id="start-a-ssh-tunnel-session-on-desktop-machine">Start a ssh tunnel session on desktop machine</h3>
+<h4 id="option-1-ssh-command">Option 1 - ssh command</h4>
+<p><code>ssh -R 9000:gitserver.corporation2.com:22 remoteserver.corporation1.com</code></p>
+<p>Here we are saying “Remote server remoteserver.corporation1.com should listen on localhost:9000 and forward all traffic to gitserver.corporation2.com:22”.</p>
+<h4 id="option-2-putty">Option 2 - Putty</h4>
+<p>This is how we would do the same via Putty</p>
+<p><img src="./putty_tunnel.png" alt="putty ssh tunnel settigns" style="width: 452px;"/></p>
+<h3 id="on-remote-server-a">On remote server A</h3>
+<ol>
+<li>Edit ~/.ssh/config<pre><code class="lang-bash"> Host sshtunnel.gitserver.corporation2.com
+         HostName localhost
+         Port <span class="number">9000</span>
+         User git
+         IdentityFile ~/.ssh/git@gitserver.corporation2.com.pem
+         IdentitiesOnly yes
+</code></pre>
+</li>
+<li>Restart ssh daemon with <code>sudo service ssh restart</code></li>
+<li>(optional) If you do not have a git repo yet, init one first with <code>git init &lt;directory&gt;</code></li>
+<li>Add a new git remote to git repository 
+<code>git remote add sshtunnelled git@sshtunnel:path/to/your/repository</code>
+notice how we used the Host specified in the ssh config above</li>
+<li>.git/config should have a remote similar to this now:<pre><code> [remote &quot;sshtunnelled&quot;]
+         url = git@sshtunnel.pingec.rds.aioss.com:path/to/your/repository
+         fetch = +refs/heads/*:refs/remotes/sshtunnelled/*
+</code></pre></li>
+<li>Now you can try using the remote repo, a simple command would be <code>git remote show sshtunnelled</code></li>
+<li>If that succeeds you can finally go ahead and do whatever you wanted to do with the now-available repo eg. <code>git pull sshtunnelled master</code></li>
+</ol>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

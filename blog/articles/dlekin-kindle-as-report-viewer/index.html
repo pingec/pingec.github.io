@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>dlekin - kindle as report viewer - Matej Drolc
+    </title>
+    <link rel="alternate" href="//pingec.si/blog/feed.xml" type="application/rss+xml" title="cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; ">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300">
+    <link rel="stylesheet" href="//pingec.si/blog/css/main.css">
+  </head>
+  <body class="article-detail">
+    <nav><img src="/blog/css/portrait_150w.png">
+      <div class="contact-info"><a href="https://twitter.com/MatejDrolc" class="icon-rettiwt"></a> <a href="mailto:firstname.lastname@pingec.si" class="icon-envelope"></a> <a href="https://si.linkedin.com/pub/matej-drolc/1a/153/459" class="icon-lnkdin"></a> <a href="/blog/feed.xml" type="application/rss+xml" class="icon-feed2"></a> <a href="https://github.com/pingec" class="icon-buhtig"></a></div>
+      <h1 class="name"><a href="/blog">Matej Drolc <br>=)</a></h1>
+    </nav>
+    <header class="header">
+      <div class="content-wrap">
+        <h1>dlekin - kindle as report viewer</h1>
+        <p class="author">Written by <span class="author"><a href="mailto:myname.mysurname@pingec.si">Matej Drolc</a></span>
+        </p>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-wrap">
+        <article class="article">
+          <section class="content"><style>
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<p><a href="/blog/articles/dlekin-kindle-as-report-viewer/IMG_20170314_005128.jpg">
+    <img src="/blog/articles/dlekin-kindle-as-report-viewer/IMG_20170314_005128_320.jpg" class="clearfix" style="height: 320px; width:auto; float:right; margin-right:15px;">
+</a>
+<br>
+<br>
+<br>
+<br>
+Repurposing a kindle (PW2 in my case) as a bank account balance monitor.</p>
+<p>Kindle makes the perfect device as dashboard or report viewer with great battery autonomy. Because of its e-ink display it uses no energy to keep the information on the screen.</p>
+<div style="clear: both;"></div> 
+
+
+<p><span class="more"></span></p>
+<h2 id="story">Story</h2>
+<p>My grandfather has lately been very interested in checking his account balance daily. All the availble means (online, sms, email) are very difficult for him because he has problems with menus, buttons and cables. This solution has none of those.</p>
+<p>There are two componenets:</p>
+<ul>
+<li>a server-side nodejs solution</li>
+<li>a client-side kindle script (installable as a kual extension)</li>
+</ul>
+<p>The kindle wakes up on configurable intervals, uses the wifi to request a new image with the bank report from the server, displays it as screensaver and goes back to sleep. With refresh interval set to every 6 hours I expect the battery to last about a month.</p>
+<p><a href="screenshot_2017_03_13T23_11_49+0100.png">
+    <img src="screenshot_2017_03_13T23_11_49+0100_320.png" style="height: 320px; width:auto; display:inline;">
+</a>
+<a href="screenshot_2017_03_13T23_11_57+0100.png">
+    <img src="screenshot_2017_03_13T23_11_57+0100_320.png" style="height: 320px; width:auto; display:inline;">
+</a>
+<a href="screenshot_2017_03_13T21_37_23+0100.png">
+    <img src="screenshot_2017_03_13T21_37_23+0100_320.png" style="height: 320px; width:auto; display:inline;">
+</a>
+<a href="IMG_20170314_005049.jpg">
+    <img src="IMG_20170314_005049_320.jpg" style="height: 320px; width:auto; display:inline;">
+</a></p>
+<p>More information: <a href="https://github.com/pingec/dlekin">https://github.com/pingec/dlekin</a></p>
+<h2 id="kindle-presetup-paperwhite2-">Kindle presetup (Paperwhite2)</h2>
+<ol>
+<li>Jailbreak it <a href="http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#Jailbreak">http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#Jailbreak</a> <a href="http://www.mobileread.com/forums/showthread.php?t=275877">http://www.mobileread.com/forums/showthread.php?t=275877</a> universal JB thread</li>
+<li>Install Kual and MobileRead Package Installer (MRPI)</li>
+<li>Instal usb networking <a href="http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#USB_Networking">http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#USB_Networking</a> <a href="http://www.mobileread.com/forums/showthread.php?t=186645">http://www.mobileread.com/forums/showthread.php?t=186645</a>
+(the readme inside explains everything in detail)</li>
+<li>Enable sshd via menu in kual launcher</li>
+<li>Connect it to your PC via usb</li>
+<li><p>Networking settings for telnet/ssh <code>host ip = 192.168.15.1, kindle ip = 192.168.15.244, user = root</code> leave the password empty</p>
+<p> You can now telnet or you can use ssh (but you need to disable wifi first for ssh)</p>
+</li>
+<li>To install dlekin follow installation instructions at <a href="https://github.com/pingec/dlekin">https://github.com/pingec/dlekin</a></li>
+</ol>
+<h2 id="debug">Debug</h2>
+<ul>
+<li><a href="refresh.sh">refresh.sh</a> is a helpful script for testing if the wakeup timer works correctly</li>
+</ul>
+<p><a href="screenshot_2017_03_09T22_14_31+0100.png">
+  <img src="screenshot_2017_03_09T22_14_31+0100_320.png" style="height: 320px; width:auto; display:inline;">
+</a></p>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="content-wrap">
+        <div class="nav"><a href="/blog/">« Full blog</a></div>
+        <section class="about"><p>The end.</p>
+
+        </section>
+        <section class="copy">
+          <p>&copy; 2017 pingec.si
+          </p>
+        </section>
+      </div>
+    </footer>
+  </body>
+</html>

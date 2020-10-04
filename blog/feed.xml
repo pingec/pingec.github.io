@@ -1,0 +1,1368 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Matej Drolc</title>
+    <atom:link href="http://pingec.si/blog/feed.xml" rel="self" type="application/rss+xml"></atom:link>
+    <link>http://pingec.si/blog</link>
+    <description>cat /dev/brains/public | grep -E &quot;dev|tech|cool&quot; </description>
+    <pubDate>Tue, 14 Mar 2017 01:00:00 +0100</pubDate>
+    <generator>Wintersmith - https://github.com/jnordberg/wintersmith</generator>
+    <language>en</language>
+    <item>
+      <title>dlekin - kindle as report viewer</title>
+      <link>http://pingec.si/blog/blog/articles/dlekin-kindle-as-report-viewer/</link>
+      <pubDate>Tue, 14 Mar 2017 01:00:00 +0100</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/dlekin-kindle-as-report-viewer/</guid>
+      <author></author>
+      <description>&lt;style&gt;
+.clearfix:after {
+  content: &quot;&quot;;
+  display: table;
+  clear: both;
+}
+&lt;/style&gt;
+
+&lt;p&gt;&lt;a href=&quot;/blog/articles/dlekin-kindle-as-report-viewer/IMG_20170314_005128.jpg&quot;&gt;
+    &lt;img src=&quot;/blog/articles/dlekin-kindle-as-report-viewer/IMG_20170314_005128_320.jpg&quot; class=&quot;clearfix&quot; style=&quot;height: 320px; width:auto; float:right; margin-right:15px;&quot;&gt;
+&lt;/a&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+Repurposing a kindle (PW2 in my case) as a bank account balance monitor.&lt;/p&gt;
+&lt;p&gt;Kindle makes the perfect device as dashboard or report viewer with great battery autonomy. Because of its e-ink display it uses no energy to keep the information on the screen.&lt;/p&gt;
+&lt;div style=&quot;clear: both;&quot;&gt;&lt;/div&gt; 
+
+
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;story&quot;&gt;Story&lt;/h2&gt;
+&lt;p&gt;My grandfather has lately been very interested in checking his account balance daily. All the availble means (online, sms, email) are very difficult for him because he has problems with menus, buttons and cables. This solution has none of those.&lt;/p&gt;
+&lt;p&gt;There are two componenets:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a server-side nodejs solution&lt;/li&gt;
+&lt;li&gt;a client-side kindle script (installable as a kual extension)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The kindle wakes up on configurable intervals, uses the wifi to request a new image with the bank report from the server, displays it as screensaver and goes back to sleep. With refresh interval set to every 6 hours I expect the battery to last about a month.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;screenshot_2017_03_13T23_11_49+0100.png&quot;&gt;
+    &lt;img src=&quot;screenshot_2017_03_13T23_11_49+0100_320.png&quot; style=&quot;height: 320px; width:auto; display:inline;&quot;&gt;
+&lt;/a&gt;
+&lt;a href=&quot;screenshot_2017_03_13T23_11_57+0100.png&quot;&gt;
+    &lt;img src=&quot;screenshot_2017_03_13T23_11_57+0100_320.png&quot; style=&quot;height: 320px; width:auto; display:inline;&quot;&gt;
+&lt;/a&gt;
+&lt;a href=&quot;screenshot_2017_03_13T21_37_23+0100.png&quot;&gt;
+    &lt;img src=&quot;screenshot_2017_03_13T21_37_23+0100_320.png&quot; style=&quot;height: 320px; width:auto; display:inline;&quot;&gt;
+&lt;/a&gt;
+&lt;a href=&quot;IMG_20170314_005049.jpg&quot;&gt;
+    &lt;img src=&quot;IMG_20170314_005049_320.jpg&quot; style=&quot;height: 320px; width:auto; display:inline;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;More information: &lt;a href=&quot;https://github.com/pingec/dlekin&quot;&gt;https://github.com/pingec/dlekin&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;kindle-presetup-paperwhite2-&quot;&gt;Kindle presetup (Paperwhite2)&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Jailbreak it &lt;a href=&quot;http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#Jailbreak&quot;&gt;http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#Jailbreak&lt;/a&gt; &lt;a href=&quot;http://www.mobileread.com/forums/showthread.php?t=275877&quot;&gt;http://www.mobileread.com/forums/showthread.php?t=275877&lt;/a&gt; universal JB thread&lt;/li&gt;
+&lt;li&gt;Install Kual and MobileRead Package Installer (MRPI)&lt;/li&gt;
+&lt;li&gt;Instal usb networking &lt;a href=&quot;http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#USB_Networking&quot;&gt;http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#USB_Networking&lt;/a&gt; &lt;a href=&quot;http://www.mobileread.com/forums/showthread.php?t=186645&quot;&gt;http://www.mobileread.com/forums/showthread.php?t=186645&lt;/a&gt;
+(the readme inside explains everything in detail)&lt;/li&gt;
+&lt;li&gt;Enable sshd via menu in kual launcher&lt;/li&gt;
+&lt;li&gt;Connect it to your PC via usb&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Networking settings for telnet/ssh &lt;code&gt;host ip = 192.168.15.1, kindle ip = 192.168.15.244, user = root&lt;/code&gt; leave the password empty&lt;/p&gt;
+&lt;p&gt; You can now telnet or you can use ssh (but you need to disable wifi first for ssh)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;To install dlekin follow installation instructions at &lt;a href=&quot;https://github.com/pingec/dlekin&quot;&gt;https://github.com/pingec/dlekin&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;debug&quot;&gt;Debug&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;refresh.sh&quot;&gt;refresh.sh&lt;/a&gt; is a helpful script for testing if the wakeup timer works correctly&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href=&quot;screenshot_2017_03_09T22_14_31+0100.png&quot;&gt;
+  &lt;img src=&quot;screenshot_2017_03_09T22_14_31+0100_320.png&quot; style=&quot;height: 320px; width:auto; display:inline;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Automating Pokemon Go</title>
+      <link>http://pingec.si/blog/blog/articles/automating-pokemon-go/</link>
+      <pubDate>Thu, 06 Oct 2016 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/automating-pokemon-go/</guid>
+      <author></author>
+      <description>&lt;style&gt;
+.clearfix:after {
+  content: &quot;&quot;;
+  display: table;
+  clear: both;
+}
+&lt;/style&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/articles/automating-pokemon-go/pokemon_go_logo.png&quot; class=&quot;clearfix&quot; style=&quot;width:320px; float:left; margin-right:15px;&quot;&gt;
+&lt;br&gt;
+&lt;br&gt;
+Today I have made public 2 projects that automate Pokemon Go. &lt;/p&gt;
+&lt;div style=&quot;clear: both;&quot;&gt;&lt;/div&gt; 
+
+
+
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;pogobot&quot;&gt;PoGoBot&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/pingec/PoGoBot&quot;&gt;https://github.com/pingec/PoGoBot&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;First one is a Pokemon Go bot written in C#. It can do many things, catch pokemons, spin pokestops and many other stuff. I lost interest after a while but managed to add every feature one would ever want (except for gyms).&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;PokemonRoute.png&quot;&gt;
+    &lt;img src=&quot;PokemonRoute_320.png&quot; style=&quot;width:320px; display: block; margin-left: auto; margin-right: auto;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;discordpogosniper&quot;&gt;DiscordPoGoSniper&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/pingec/DiscordPoGoSniper&quot;&gt;https://github.com/pingec/DiscordPoGoSniper&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;This thing I wrote for a nice pokemon go community on reddit and some Discord channels. Basically it listens on various Discord channels for players to post pokemon spottings. Then it uses a modified version of the bot above to verify the posted sighting. The mechanism is similar to sniping, it teleports to the location, scans for the pokemon, initiates an encounter but instead catching the pokemon it simply reports back despawn time, IV% and attack moves to configurable Discord channels. It works very well and uses multiple PTC accounts concurrently. For a channel with 10000 members I needed at least 10 PTC accounts to make it work well. &lt;/p&gt;
+&lt;p&gt;The biggest problem was the big load on Discord servers which at some point even crashed. Big thanks the Discord team for the hard work they put in and extra resources they brought in to make a 10000-online-members channel work.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;PoGoDiscord.png&quot;&gt;
+    &lt;img src=&quot;PoGoDiscord_320.png&quot; style=&quot;width:320px; display: block; margin-left: auto; margin-right: auto;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Fixing a faulty sensor in my freezer</title>
+      <link>http://pingec.si/blog/blog/articles/fixing-a-faulty-freezer-sensor/</link>
+      <pubDate>Tue, 04 Oct 2016 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/fixing-a-faulty-freezer-sensor/</guid>
+      <author></author>
+      <description>&lt;p&gt;I own a not-old-enough-to-die Electrolux ERO2923 refrigerator. Recently it started to do weird things, the refrigerator compartment was at almost room temperature (16°C) while the freezer was showing (2°C). Turns out the temperature sensor in the freezer was faulty.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;story&quot;&gt;Story&lt;/h2&gt;
+&lt;p&gt;So one day I come into the kitchen and the fridge seems not to function. The temperature is way too high. Then I inspect the freezer - to the touch it seems very very cold but the temperature gauge shows 2°C. I check the backside and see lots of ice on the piping which looks cool - but wrong.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;IMG_20160306_164320.jpg&quot;&gt;
+    &lt;img src=&quot;IMG_20160306_164320_320.jpg&quot; style=&quot;width:320px; display: block; margin-left: auto; margin-right: auto;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I call an Electrolux repairs technician and he confirms my suspicion - something is wrong with the temperature sensing mechanism of the freezer. 
+This is bad news, he explains, because there are no official spare parts nor repair procedures for the freezer. Contrarily the fridge 
+compartment is repairable - see &lt;a href=&quot;/blog/articles/fixing-a-faulty-freezer-sensor/599374122.pdf&quot;&gt;599374122.pdf&lt;/a&gt; and &lt;a href=&quot;/blog/articles/fixing-a-faulty-freezer-sensor/599374207.pdf&quot;&gt;599374207.pdf&lt;/a&gt;. &lt;/p&gt;
+&lt;h2 id=&quot;my-repair&quot;&gt;My repair&lt;/h2&gt;
+&lt;p&gt;Temperature sensing is done with thermistors. I dug out &lt;a href=&quot;/blog/articles/fixing-a-faulty-freezer-sensor/599374205.pdf&quot;&gt;this pdf&lt;/a&gt; which contains a chart of the thermistor resistance at various temperatures.
+I was able to find a thermistor with the same characteristics - &lt;a href=&quot;/blog/articles/fixing-a-faulty-freezer-sensor/NTCLE203E3272FB0.pdf&quot;&gt;NTCLE203E3272FB0&lt;/a&gt;. The sensor should be located somewhere in the middle of the freezer so I taped it there and wired it to the controller board instead of the old one. You can figure out the wiring by observing the working sensor that is wired to the fridge, the freezer’s one is the same. The appliance has been running fine for a couple of months now. I have it set at -16°C and the actual temperature measured with an accurate thermometer is -18°. The repair cost me 3€ while a new fridge would have cost 500€ or more.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;DSC04159.jpg&quot;&gt;
+    &lt;img src=&quot;DSC04159_320.jpg&quot; style=&quot;width:320px; display: block; margin-left: auto; margin-right: auto;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Git over ssh tunnel</title>
+      <link>http://pingec.si/blog/blog/articles/git-over-ssh-tunnel/</link>
+      <pubDate>Mon, 26 Sep 2016 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/git-over-ssh-tunnel/</guid>
+      <author></author>
+      <description>&lt;p&gt;This is a short recipe on how to access a git repository through a shh tunnel. &lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In this scenario, we have ssh access to remoteserver.corporation1.com. &lt;/p&gt;
+&lt;p&gt;We want to access a on gitserver.corporation2.com from remoteserver.corporation1.com, the two machines cannot connect to eachother directly in any way.&lt;/p&gt;
+&lt;h2 id=&quot;solution&quot;&gt;Solution&lt;/h2&gt;
+&lt;p&gt;Since we can connect to both remoteserver.corporation1.com and gitserver.corporation2.com from our desktop machine,
+we will establish a ssh tunnel from remoteserver.corporation1.com to gitserver.corporation2.com over our desktop machine.&lt;/p&gt;
+&lt;h3 id=&quot;start-a-ssh-tunnel-session-on-desktop-machine&quot;&gt;Start a ssh tunnel session on desktop machine&lt;/h3&gt;
+&lt;h4 id=&quot;option-1-ssh-command&quot;&gt;Option 1 - ssh command&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;ssh -R 9000:gitserver.corporation2.com:22 remoteserver.corporation1.com&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Here we are saying “Remote server remoteserver.corporation1.com should listen on localhost:9000 and forward all traffic to gitserver.corporation2.com:22”.&lt;/p&gt;
+&lt;h4 id=&quot;option-2-putty&quot;&gt;Option 2 - Putty&lt;/h4&gt;
+&lt;p&gt;This is how we would do the same via Putty&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./putty_tunnel.png&quot; alt=&quot;putty ssh tunnel settigns&quot; style=&quot;width: 452px;&quot;/&gt;&lt;/p&gt;
+&lt;h3 id=&quot;on-remote-server-a&quot;&gt;On remote server A&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Edit ~/.ssh/config&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt; Host sshtunnel.gitserver.corporation2.com
+         HostName localhost
+         Port &lt;span class=&quot;number&quot;&gt;9000&lt;/span&gt;
+         User git
+         IdentityFile ~/.ssh/git@gitserver.corporation2.com.pem
+         IdentitiesOnly yes
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;Restart ssh daemon with &lt;code&gt;sudo service ssh restart&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;(optional) If you do not have a git repo yet, init one first with &lt;code&gt;git init &amp;lt;directory&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add a new git remote to git repository 
+&lt;code&gt;git remote add sshtunnelled git@sshtunnel:path/to/your/repository&lt;/code&gt;
+notice how we used the Host specified in the ssh config above&lt;/li&gt;
+&lt;li&gt;.git/config should have a remote similar to this now:&lt;pre&gt;&lt;code&gt; [remote &amp;quot;sshtunnelled&amp;quot;]
+         url = git@sshtunnel.pingec.rds.aioss.com:path/to/your/repository
+         fetch = +refs/heads/*:refs/remotes/sshtunnelled/*
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Now you can try using the remote repo, a simple command would be &lt;code&gt;git remote show sshtunnelled&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;If that succeeds you can finally go ahead and do whatever you wanted to do with the now-available repo eg. &lt;code&gt;git pull sshtunnelled master&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    <item>
+      <title>HttpListener port sharing with IIS or another process</title>
+      <link>http://pingec.si/blog/blog/articles/HttpListener-port-sharing-with-IIS-or-another-process/</link>
+      <pubDate>Thu, 26 May 2016 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/HttpListener-port-sharing-with-IIS-or-another-process/</guid>
+      <author></author>
+      <description>&lt;p&gt;Here I explore some options of hosting a HttpListener-based process on port 80 alongside another process that binds to port 80. Sharing one tcp port among multiple processes on the same Windows machine can sometimes be possible with some limitations. It mostly depends whether programs are implemented on top of the http.sys driver or not.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h3 id=&quot;about-http-sys-implementors&quot;&gt;About Http.sys implementors&lt;/h3&gt;
+&lt;p&gt;I have a custom web server that uses HttpListener internally. HttpListener (same as IIS) calls the Microsoft HTTP Server API which is an interface for the kernel-mode device driver called HTTP protocol stack (HTTP.sys).
+&lt;strong&gt;Any application that runs on top of http.sys can be made to run alongside and work together with another http.sys app (eg. IIS) on the same listening port.&lt;/strong&gt; In order to achieve that, &lt;a href=&quot;https://msdn.microsoft.com/en-us/library/windows/desktop/aa364698(v=vs.85).aspx&quot;&gt;urlprefixes&lt;/a&gt; must be properly configured.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./Http.sys.stack.png&quot; style=&quot;width:620px; display: block; margin-left: auto; margin-right: auto;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;In my case I needed both IIS and HttpListener to listen on port 80. &lt;/p&gt;
+&lt;p&gt;As long as urlprefixes do not clash, this is possible. &lt;/p&gt;
+&lt;p&gt;For example IIS (or another http.sys app/lib) can listen on &lt;a href=&quot;http://host1:80&quot;&gt;http://host1:80&lt;/a&gt; and HttpListener on &lt;a href=&quot;http://host2:80&quot;&gt;http://host2:80&lt;/a&gt; and it will work.&lt;/p&gt;
+&lt;p&gt;To show all HTTP.SYS currently registered prefixes, you can use the following command:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;netsh http show servicestate | findstr /r &amp;quot;Server\ Session HTTP&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&quot;https://msdn.microsoft.com/en-us/library/windows/desktop/aa364698(v=vs.85).aspx&quot;&gt;More about UrlPrefixes&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;sharing-same-port-with-iis&quot;&gt;Sharing same port with IIS&lt;/h3&gt;
+&lt;p&gt;By default IIS binds to url prefix “&lt;a href=&quot;http://*:80/&quot;&gt;http://*:80/&lt;/a&gt;“ which is a weak wildcard so all host-specific bindings by HttpListener will take precedence over IIS. So setting HttpListener to listen on “&lt;a href=&quot;http://app1.mydomain.com:80/&quot;&gt;http://app1.mydomain.com:80/&lt;/a&gt;“ will work fine. Binding IIS to “&lt;a href=&quot;http://app2.mydomain.com:80/&quot;&gt;http://app2.mydomain.com:80/&lt;/a&gt;“ would also work fine.&lt;/p&gt;
+&lt;h3 id=&quot;segregating-httplistener-and-a-non-http-sys-server-on-different-interfaces&quot;&gt;Segregating HttpListener and a non-http.sys server on different interfaces&lt;/h3&gt;
+&lt;p&gt;Let there be two IPs available (for example 1.1.1.1 and 2.2.2.2) and we want to have HttpListener listen on one and &lt;em&gt;Apache&lt;/em&gt; on the other.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Limit HTTP Server API to one IP by doing:
+ netsh http add iplisten 1.1.1.1&lt;/p&gt;
+&lt;p&gt;This will limit HTTP Server API and thus HttpListener to only listen on 1.1.1.1.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Make apache bind to 2.2.2.2.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;a href=&quot;https://msdn.microsoft.com/en-us/library/windows/desktop/aa364698(v=vs.85).aspx&quot;&gt;Additional info&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;segregating-iis-and-httplistener-on-different-interfaces&quot;&gt;Segregating IIS and HttpListener on different interfaces&lt;/h3&gt;
+&lt;p&gt;To bind IIS and HttpListener each to its own IP (for example 1.1.1.1 and 2.2.2.2).
+Set HttpListener’s urlprefix to “&lt;a href=&quot;http://1.1.1.1:80&quot;&gt;http://1.1.1.1:80&lt;/a&gt;“. Set IIS IP binding to “2.2.2.2” which will by default internally translate to a urlprefix of “&lt;a href=&quot;http://2.2.2.2:80&quot;&gt;http://2.2.2.2:80&lt;/a&gt;“.&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Syncing Windows workstation and Debian server with Syncthing</title>
+      <link>http://pingec.si/blog/blog/articles/syncing-windows-workstation-and-debian-server-with-syncthing/</link>
+      <pubDate>Thu, 21 Jan 2016 01:00:00 +0100</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/syncing-windows-workstation-and-debian-server-with-syncthing/</guid>
+      <author></author>
+      <description>&lt;p&gt;&lt;a href=&quot;https://syncthing.net/&quot;&gt;
+    &lt;img src=&quot;//pingec.si/blog/articles/syncing-windows-workstation-and-debian-server-with-syncthing/syncthing-logo-horizontal.svg&quot; style=&quot;width:320px; float: left; margin-right:15px&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;This is a short recipe on how to setup &lt;a href=&quot;https://syncthing.net/&quot;&gt;Syncthing&lt;/a&gt; for syncing files between my Windows workstation and a Debian web server over internet. Syncing is done through a ssh tunnel, no need to expose any public ports to the internet. &lt;/p&gt;
+&lt;div style=&quot;display: block; clear: both;&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h1 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://the.earth.li/~sgtatham/putty/latest/x86/putty-0.66-installer.exe&quot;&gt;Putty bundle&lt;/a&gt; installed on the Windows workstation (this time we need plink.exe)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;syncthing-setup-on-debian-server&quot;&gt;Syncthing setup on Debian server&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Follow the instructions provided &lt;a href=&quot;http://apt.syncthing.net/&quot;&gt;here&lt;/a&gt;&lt;br&gt; Just in case, here they are:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt; &lt;span class=&quot;comment&quot;&gt;# Add the release PGP keys:&lt;/span&gt;
+ curl &lt;span class=&quot;operator&quot;&gt;-s&lt;/span&gt; https://syncthing.net/release-key.txt | sudo apt-key add -
+
+ &lt;span class=&quot;comment&quot;&gt;# Add the &quot;release&quot; channel to your APT sources:&lt;/span&gt;
+ &lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;deb http://apt.syncthing.net/ syncthing release&quot;&lt;/span&gt; | sudo tee /etc/apt/sources.list.d/syncthing.list
+
+ &lt;span class=&quot;comment&quot;&gt;# Update and install syncthing:&lt;/span&gt;
+ sudo apt-get update
+ sudo apt-get install syncthing
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;In case you need to edit any settings like ports you need to edit  ~/.config/syncthing/config.xml&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create the file /etc/init.d/syncthing&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt; sudo touch /etc/init.d/syncthing
+ sudo chmod &lt;span class=&quot;number&quot;&gt;755&lt;/span&gt; /etc/init.d/syncthing
+ sudo chown root:root /etc/init.d/syncthing
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;With the following content:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt; &lt;span class=&quot;comment&quot;&gt;#!/bin/sh&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;### BEGIN INIT INFO&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;# Provides: syncthing&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;# Required-Start: $local_fs $remote_fs&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;# Required-Stop: $local_fs $remote_fs&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;# Should-Start: $network&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;# Should-Stop: $network&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;# Default-Start: 2 3 4 5&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;# Default-Stop: 0 1 6&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;# Short-Description: Multi-user daemonized version of syncthing.&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;# Description: Starts the syncthing daemon for all registered users.&lt;/span&gt;
+ &lt;span class=&quot;comment&quot;&gt;### END INIT INFO&lt;/span&gt;
+
+ &lt;span class=&quot;comment&quot;&gt;# Replace with users you want to run syncthing clients for&lt;/span&gt;
+ syncthing_USERS=&lt;span class=&quot;string&quot;&gt;&quot;myusername&quot;&lt;/span&gt;
+ DAEMON=/usr/bin/syncthing
+
+ &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;title&quot;&gt;startd&lt;/span&gt;&lt;/span&gt;() {
+ &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; stuser &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$syncthing_USERS&lt;/span&gt;; &lt;span class=&quot;keyword&quot;&gt;do&lt;/span&gt;
+     HOMEDIR=$(getent passwd &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; | awk -F: &lt;span class=&quot;string&quot;&gt;'{print $6}'&lt;/span&gt;)
+     &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; [ &lt;span class=&quot;operator&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$config&lt;/span&gt; ]; &lt;span class=&quot;keyword&quot;&gt;then&lt;/span&gt;
+     &lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;Starting syncthiing for &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt;&quot;&lt;/span&gt;
+     start-stop-daemon -b -o -c &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; -S -u &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; -x &lt;span class=&quot;variable&quot;&gt;$DAEMON&lt;/span&gt;
+     &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;
+     &lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;Couldn't start syncthing for &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; (no &lt;span class=&quot;variable&quot;&gt;$config&lt;/span&gt; found)&quot;&lt;/span&gt;
+     &lt;span class=&quot;keyword&quot;&gt;fi&lt;/span&gt;
+ &lt;span class=&quot;keyword&quot;&gt;done&lt;/span&gt;
+ }
+
+ &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;title&quot;&gt;stopd&lt;/span&gt;&lt;/span&gt;() {
+ &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; stuser &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$syncthing_USERS&lt;/span&gt;; &lt;span class=&quot;keyword&quot;&gt;do&lt;/span&gt;
+     dbpid=$(pgrep -fu &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$DAEMON&lt;/span&gt;)
+     &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; [ ! -z &lt;span class=&quot;string&quot;&gt;&quot;&lt;span class=&quot;variable&quot;&gt;$dbpid&lt;/span&gt;&quot;&lt;/span&gt; ]; &lt;span class=&quot;keyword&quot;&gt;then&lt;/span&gt;
+     &lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;Stopping syncthing for &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt;&quot;&lt;/span&gt;
+     start-stop-daemon -o -c &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; -K -u &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; -x &lt;span class=&quot;variable&quot;&gt;$DAEMON&lt;/span&gt;
+     &lt;span class=&quot;keyword&quot;&gt;fi&lt;/span&gt;
+ &lt;span class=&quot;keyword&quot;&gt;done&lt;/span&gt;
+ }
+
+ &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;title&quot;&gt;status&lt;/span&gt;&lt;/span&gt;() {
+ &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; stuser &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$syncthing_USERS&lt;/span&gt;; &lt;span class=&quot;keyword&quot;&gt;do&lt;/span&gt;
+     dbpid=$(pgrep -fu &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$DAEMON&lt;/span&gt;)
+     &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; [ -z &lt;span class=&quot;string&quot;&gt;&quot;&lt;span class=&quot;variable&quot;&gt;$dbpid&lt;/span&gt;&quot;&lt;/span&gt; ]; &lt;span class=&quot;keyword&quot;&gt;then&lt;/span&gt;
+     &lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;syncthing for USER &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt;: not running.&quot;&lt;/span&gt;
+     &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;
+     &lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;syncthing for USER &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt;: running (pid &lt;span class=&quot;variable&quot;&gt;$dbpid&lt;/span&gt;)&quot;&lt;/span&gt;
+     &lt;span class=&quot;keyword&quot;&gt;fi&lt;/span&gt;
+ &lt;span class=&quot;keyword&quot;&gt;done&lt;/span&gt;
+ }
+
+ &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;&lt;span class=&quot;variable&quot;&gt;$1&lt;/span&gt;&quot;&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt;
+ start) startd
+     ;;
+ stop) stopd
+     ;;
+ restart|reload|force-reload) stopd &amp;amp;&amp;amp; startd
+     ;;
+ status) status
+     ;;
+ *) &lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;Usage: /etc/init.d/syncthing {start|stop|reload|force-reload|restart|status}&quot;&lt;/span&gt;
+     &lt;span class=&quot;built_in&quot;&gt;exit&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;
+ ;;
+ &lt;span class=&quot;keyword&quot;&gt;esac&lt;/span&gt;
+
+ &lt;span class=&quot;built_in&quot;&gt;exit&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt; &lt;strong&gt;Don’t forget to set syncthing_USERS to the desired user for running syncthing.&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Now run&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt; /etc/init.d/syncthing start
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt; Which will start the daemon.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To make it autostart on bootup run&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt; sudo update-rc.d syncthing defaults
+ sudo update-rc.d syncthing &lt;span class=&quot;built_in&quot;&gt;enable&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&quot;windows-workstation-setup&quot;&gt;Windows workstation setup&lt;/h1&gt;
+&lt;/li&gt;
+&lt;li&gt;Download the &lt;a href=&quot;https://syncthing.net/&quot;&gt;Syncthing Core (CLI &amp;amp; Web UI) for Windows&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Extract it to C:\Program Files\syncthing&lt;/li&gt;
+&lt;li&gt;Create “C:\Program Files\syncthing\SYNCNOW.bat” with the following content:&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;start syncthing.exe
+start &lt;span class=&quot;string&quot;&gt;&quot;&quot;&lt;/span&gt; http://localhost:&lt;span class=&quot;number&quot;&gt;8385&lt;/span&gt;
+&lt;span class=&quot;string&quot;&gt;&quot;C:\Program Files (x86)\PuTTY\plink.exe&quot;&lt;/span&gt; -L &lt;span class=&quot;number&quot;&gt;22001&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;127.0&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;0.1&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;22000&lt;/span&gt; -L &lt;span class=&quot;number&quot;&gt;8385&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;127.0&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;0.1&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;8384&lt;/span&gt; yoursshuser@your.debian.server.com
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Two web pages should open &lt;a href=&quot;http://localhost:8385/&quot;&gt;http://localhost:8385/&lt;/a&gt; and &lt;a href=&quot;http://127.0.0.1:8384/&quot;&gt;http://127.0.0.1:8384/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt; &lt;a href=&quot;./Syncthing_screencap.PNG&quot;&gt;
+ &lt;img src=&quot;./Syncthing_screencap_320.png&quot; style=&quot;width:320px; display: block; margin-left: auto; margin-right: auto;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Proceed to adding both machines IDs so they can see each other. (Check Syncthing instructions for more info on basic setup)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;That’s it. I prefer to run syncthing on the workstation manually only when I need to. So when file syncing is needed, SYNCNOW.bat should be ran manually and syncing should work. You can easily stop the process by simply closing all the opened cmd windowns.&lt;/p&gt;
+&lt;h1 id=&quot;permissions-clash&quot;&gt;Permissions clash&lt;/h1&gt;
+&lt;p&gt;Someone asked what to do if syncthng is creating files and directories with a syncuser:syncgroup different from what apache is using and thus apache cannot access file/dirs created by sync user. 
+One solution that comes to mind is the following:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Modify /etc/init.d/syncthing from&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;start-stop-daemon -b -o -c &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; -S -u &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; -x &lt;span class=&quot;variable&quot;&gt;$DAEMON&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;to&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;start-stop-daemon -b -o -c &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; -S -u &lt;span class=&quot;variable&quot;&gt;$stuser&lt;/span&gt; -x &lt;span class=&quot;variable&quot;&gt;$DAEMON&lt;/span&gt; --umask &lt;span class=&quot;number&quot;&gt;002&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the windows workstation web ui set “Ignore Permissions” to true. This seems to be required to have newly-created files on linux-based server be writable by the group &lt;a href=&quot;https://github.com/syncthing/syncthing/issues/1339&quot;&gt;https://github.com/syncthing/syncthing/issues/1339&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Run the following commands on server (presuming that /var/www/sync is the dir shared by apache and syncthing):&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;chown -R syncuser:www-data /var/www
+chmod -R g+s /var/www
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Now all new dirs and files should preserve www-data group and have rw-rw-r– permissions.&lt;/p&gt;
+&lt;p&gt;(If anyone knows a more better way, please let me know.)&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>WT3020 vpn roadwarrior micro router box to keep in your pocket</title>
+      <link>http://pingec.si/blog/blog/articles/wt3020-vpn-roadwarrior-micro-router-box-to-keep-in-your-pocket/</link>
+      <pubDate>Mon, 12 Jan 2015 01:00:00 +0100</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/wt3020-vpn-roadwarrior-micro-router-box-to-keep-in-your-pocket/</guid>
+      <author></author>
+      <description>&lt;p&gt;&lt;a href=&quot;//pingec.si/blog/articles/wt3020-vpn-roadwarrior-micro-router-box-to-keep-in-your-pocket/IMG_20150111_221819.jpg&quot;&gt;
+    &lt;img src=&quot;//pingec.si/blog/articles/wt3020-vpn-roadwarrior-micro-router-box-to-keep-in-your-pocket/IMG_20150111_221819_320.jpg&quot; style=&quot;width:320px; float: left; margin-right:15px&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Configuration recipe for &lt;a href=&quot;http://wiki.openwrt.org/toh/nexx/wt3020&quot;&gt;NEXX WT3020H&lt;/a&gt; micro router as a vpn roadwarrior setup. This guide involves two OpenWrt devices both running OpenVpn with SSL, one in client and one in server mode. In this case WT3020 as the client and WDR3600 as server. The WT3020 device is a perfect candidate for such use case. It is cheap, very small and can be powered via any micro USB charger. Perfect for taking on business trips, vacations and so on.&lt;/p&gt;
+&lt;div style=&quot;display: block; clear: both;&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;On the client side (WT3020), wlan and lan internet traffic will be routed through the vpn tunnel thus making a vpn tunnel establishment as easy as plugging the WT3020’s WAN port into any dhcp-enabled LAN with internet access. The tunnel uses tcp protocol over port 443 since this outbound port is usually not blocked by firewalls. &lt;/p&gt;
+&lt;p&gt;The purpose of this setup is to provide:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a tunnel with the purpose of encrypting the traffic,&lt;/li&gt;
+&lt;li&gt;allowing apps (Skype, Hangouts, Steam) to connect to the internet regardless of how the firewall of the network we are a guest at is configured.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;This setup does not bridge lan subnets on both end points. It only provides an encrypted tunnel that acts as a gateway for internet traffic.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;//pingec.si/blog/articles/wt3020-vpn-roadwarrior-micro-router-box-to-keep-in-your-pocket/openvpn-tunnel-diagram.PNG&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;NEXX WT3020 with &lt;strong&gt;8MB flash&lt;/strong&gt;, running OpenWrt &lt;a href=&quot;http://downloads.openwrt.org/snapshots/trunk/ramips.mt7620/&quot;&gt;(grab it here)&lt;/a&gt; also see &lt;a href=&quot;http://snakelab.cc/2014/12/05/howto_flash_openwrt_on_wt3020.html&quot;&gt;&lt;del&gt;Howto flash instructions&lt;/del&gt;&lt;/a&gt; edit: apparently the image can now be flashed directly via web interface without physically opening the device.&lt;/li&gt;
+&lt;li&gt;Another OpenWrt device running OpenVpn server (in this case WDR3600)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;openvpn-server-setup-wdr3600-&quot;&gt;OpenVpn Server Setup (wdr3600)&lt;/h1&gt;
+&lt;h2 id=&quot;install-openvpn-about-1-5mb-of-space-required-&quot;&gt;install OpenVpn (about 1.5MB of space required)&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;opkg update; opkg install openvpn-openssl openvpn-easy-rsa
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;generate-ca-keys-and-certs-last-command-takes-a-while-&quot;&gt;Generate CA, keys and certs (last command takes a while)&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;source&lt;/span&gt; /etc/easy-rsa/vars
+clean-all
+pkitool --initca
+pkitool --server my-server
+pkitool wt3020-client
+build-dh
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;copy-generated-ca-cert-server-keys-and-diffie-hellman-parameters-to-where-openvpn-expects-them&quot;&gt;Copy generated CA cert, server keys and Diffie-Hellman parameters to where OpenVpn expects them&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$KEY_DIR&lt;/span&gt;
+mkdir -p /etc/openvpn
+cp ca.crt my-server.* dh*.pem  /etc/openvpn/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;ca-key-can-now-be-moved-to-some-safe-place-it-is-only-needed-for-generating-new-keys&quot;&gt;ca.key can now be moved to some safe place, it is only needed for generating new keys&lt;/h2&gt;
+&lt;h2 id=&quot;-etc-config-network&quot;&gt;/etc/config/network&lt;/h2&gt;
+&lt;p&gt;Append the following section:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config interface &lt;span class=&quot;string&quot;&gt;'vpn0'&lt;/span&gt;
+        option ifname &lt;span class=&quot;string&quot;&gt;'tun0'&lt;/span&gt;
+        option proto &lt;span class=&quot;string&quot;&gt;'none'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Reload network config&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;/etc/init.d/network reload
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;-etc-config-firewall&quot;&gt;/etc/config/firewall&lt;/h2&gt;
+&lt;p&gt;Append the following sections:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#config rule&lt;/span&gt;
+&lt;span class=&quot;comment&quot;&gt;#        option name 'Allow-OpenVPN-Inbound'&lt;/span&gt;
+&lt;span class=&quot;comment&quot;&gt;#        option target 'ACCEPT'&lt;/span&gt;
+&lt;span class=&quot;comment&quot;&gt;#        option src '*'&lt;/span&gt;
+&lt;span class=&quot;comment&quot;&gt;#        option proto 'udp'&lt;/span&gt;
+&lt;span class=&quot;comment&quot;&gt;#        option dest_port '1194'&lt;/span&gt;
+
+config rule
+        option name &lt;span class=&quot;string&quot;&gt;'Allow-OpenVPN-443tcp-Inbound'&lt;/span&gt;
+        option target &lt;span class=&quot;string&quot;&gt;'ACCEPT'&lt;/span&gt;
+        option src &lt;span class=&quot;string&quot;&gt;'*'&lt;/span&gt;
+        option proto &lt;span class=&quot;string&quot;&gt;'tcp'&lt;/span&gt;
+        option dest_port &lt;span class=&quot;string&quot;&gt;'443'&lt;/span&gt;
+
+config zone
+        option name &lt;span class=&quot;string&quot;&gt;'vpn'&lt;/span&gt;
+        option input &lt;span class=&quot;string&quot;&gt;'ACCEPT'&lt;/span&gt;
+        option forward &lt;span class=&quot;string&quot;&gt;'ACCEPT'&lt;/span&gt;
+        option output &lt;span class=&quot;string&quot;&gt;'ACCEPT'&lt;/span&gt;
+        option network &lt;span class=&quot;string&quot;&gt;'vpn0'&lt;/span&gt;
+
+config forwarding
+        option src &lt;span class=&quot;string&quot;&gt;'vpn'&lt;/span&gt;
+        option dest &lt;span class=&quot;string&quot;&gt;'wan'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Reload firewall config&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;/etc/init.d/firewall reload
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;-etc-config-openvpn&quot;&gt;/etc/config/openvpn&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config openvpn &lt;span class=&quot;string&quot;&gt;'myvpn'&lt;/span&gt;
+        option enabled &lt;span class=&quot;string&quot;&gt;'1'&lt;/span&gt;
+        option dev &lt;span class=&quot;string&quot;&gt;'tun'&lt;/span&gt;
+        option proto &lt;span class=&quot;string&quot;&gt;'tcp'&lt;/span&gt;
+        option &lt;span class=&quot;built_in&quot;&gt;log&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;'/tmp/openvpn.log'&lt;/span&gt;
+        option verb &lt;span class=&quot;string&quot;&gt;'3'&lt;/span&gt;
+        option ca &lt;span class=&quot;string&quot;&gt;'/etc/openvpn/ca.crt'&lt;/span&gt;
+        option cert &lt;span class=&quot;string&quot;&gt;'/etc/openvpn/my-server.crt'&lt;/span&gt;
+        option key &lt;span class=&quot;string&quot;&gt;'/etc/openvpn/my-server.key'&lt;/span&gt;
+        option server &lt;span class=&quot;string&quot;&gt;'10.8.0.0 255.255.255.0'&lt;/span&gt;
+        option port &lt;span class=&quot;string&quot;&gt;'443'&lt;/span&gt;
+        option keepalive &lt;span class=&quot;string&quot;&gt;'10 120'&lt;/span&gt;
+        option dh &lt;span class=&quot;string&quot;&gt;'/etc/openvpn/dh2048.pem'&lt;/span&gt;
+        option push &lt;span class=&quot;string&quot;&gt;'redirect-gateway def1'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;run-openvpn-server&quot;&gt;Run OpenVpn server&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;/etc/init.d/openvpn &lt;span class=&quot;built_in&quot;&gt;enable&lt;/span&gt;
+/etc/init.d/openvpn start
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&quot;openvpn-client-setup-wt3020-&quot;&gt;OpenVpn Client Setup (wt3020)&lt;/h1&gt;
+&lt;h2 id=&quot;install-openvpn&quot;&gt;Install OpenVpn&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;opkg update; opkg install openvpn-openssl
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;transfer-client-keys-to-from-your-server-device-to-your-client-device-nexx-wt3020-then-on-the-client-&quot;&gt;Transfer client keys to from your server device to your client device (NEXX WT3020) then on the client:&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;cp ca.crt wt3020-client.*          /etc/openvpn/     &lt;span class=&quot;comment&quot;&gt;## this is done on wt3020 (the openvpn client device)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;-etc-config-network&quot;&gt;/etc/config/network&lt;/h2&gt;
+&lt;p&gt;Append the following section:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config interface &lt;span class=&quot;string&quot;&gt;'vpn0'&lt;/span&gt;
+        option ifname &lt;span class=&quot;string&quot;&gt;'tun0'&lt;/span&gt;
+        option proto &lt;span class=&quot;string&quot;&gt;'none'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Reload network config&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;/etc/init.d/network reload
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;-etc-config-firewall&quot;&gt;/etc/config/firewall&lt;/h2&gt;
+&lt;p&gt;Change the following section:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config forwarding
+        option src &lt;span class=&quot;string&quot;&gt;'lan'&lt;/span&gt;
+        option dest &lt;span class=&quot;string&quot;&gt;'wan'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To this:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config forwarding
+        option src &lt;span class=&quot;string&quot;&gt;'lan'&lt;/span&gt;
+        option dest &lt;span class=&quot;string&quot;&gt;'vpn'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Note: this step is missing in the official OpenWrt guide (see link at bottom), but is necessary.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Also whenever you want to bypass the vpn, simply change the above option from ‘vpn’ back to ‘wan’, reload firewall and network or if you want to make it permanent, disable OpenVpn and reboot.&lt;/p&gt;
+&lt;p&gt;Append the following sections:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config zone
+        option name &lt;span class=&quot;string&quot;&gt;'vpn'&lt;/span&gt;
+        option input &lt;span class=&quot;string&quot;&gt;'ACCEPT'&lt;/span&gt;
+        option forward &lt;span class=&quot;string&quot;&gt;'ACCEPT'&lt;/span&gt;
+        option output &lt;span class=&quot;string&quot;&gt;'ACCEPT'&lt;/span&gt;
+        option network &lt;span class=&quot;string&quot;&gt;'vpn0'&lt;/span&gt;
+        option masq &lt;span class=&quot;string&quot;&gt;'1'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Note: ip masquerading is enabled. This option is missing in the official OpenWrt guide (see link at bottom), but is necessary.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Reload firewall config&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;/etc/init.d/firewall reload
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;-etc-config-openvpn&quot;&gt;/etc/config/openvpn&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config openvpn &lt;span class=&quot;string&quot;&gt;'myvpn'&lt;/span&gt;
+        option enabled &lt;span class=&quot;string&quot;&gt;'1'&lt;/span&gt;
+        option dev &lt;span class=&quot;string&quot;&gt;'tun'&lt;/span&gt;
+        option proto &lt;span class=&quot;string&quot;&gt;'tcp'&lt;/span&gt;
+        option &lt;span class=&quot;built_in&quot;&gt;log&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;'/tmp/openvpn.log'&lt;/span&gt;
+        option verb &lt;span class=&quot;string&quot;&gt;'3'&lt;/span&gt;
+        option ca &lt;span class=&quot;string&quot;&gt;'/etc/openvpn/ca.crt'&lt;/span&gt;
+        option cert &lt;span class=&quot;string&quot;&gt;'/etc/openvpn/wt3020-client.crt'&lt;/span&gt;
+        option key &lt;span class=&quot;string&quot;&gt;'/etc/openvpn/wt3020-client.key'&lt;/span&gt;
+        option client &lt;span class=&quot;string&quot;&gt;'1'&lt;/span&gt;
+        option remote_cert_tls &lt;span class=&quot;string&quot;&gt;'server'&lt;/span&gt;
+        option remote &lt;span class=&quot;string&quot;&gt;'xxx.xxx.xxx.xxx 443'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Where xxx.xxx.xxx.xxx is the public IP address of your OpenVpn server.&lt;/p&gt;
+&lt;h2 id=&quot;run-openvpn-client&quot;&gt;Run OpenVpn client&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;/etc/init.d/openvpn &lt;span class=&quot;built_in&quot;&gt;enable&lt;/span&gt;
+/etc/init.d/openvpn start
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You should soon be able to ping the OpenVpn server (10.8.0.1) and traffic should all be routed through it&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;ping -c4 &lt;span class=&quot;number&quot;&gt;10.8&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;0.1&lt;/span&gt;
+traceroute &lt;span class=&quot;number&quot;&gt;8.8&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;8.8&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If problems arise check the log in /tmp/openvpn.log for hints.&lt;/p&gt;
+&lt;p&gt;Adapted from &lt;a href=&quot;http://wiki.openwrt.org/doc/howto/vpn.openvpn&quot;&gt;OpenWrt wiki&lt;/a&gt; &lt;/p&gt;
+&lt;h1 id=&quot;bonus-making-it-work-in-china&quot;&gt;Bonus: making it work in China&lt;/h1&gt;
+&lt;p&gt;A friend reported to me that OpenVpn communication does not seem to work in China. However, ssh does seem to work fine at this time (January 2015) so we decided to tunnel the vpn tunnel over a ssh tunnel.&lt;/p&gt;
+&lt;p&gt;Create a ssh tunnel:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;ssh -L &lt;span class=&quot;number&quot;&gt;127.0&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;0.1&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;6666&lt;/span&gt;:OVpnServerIP:&lt;span class=&quot;number&quot;&gt;443&lt;/span&gt; &lt;span class=&quot;operator&quot;&gt;-l&lt;/span&gt; sshUser SshServerIP
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In OpenVpn client config replace&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;option remote OVpnServerIP &lt;span class=&quot;number&quot;&gt;443&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;with:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;option remote &lt;span class=&quot;number&quot;&gt;127.0&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;0.1&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;6666&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OVpnServerIP and SshServerIP can be the same machine.&lt;/p&gt;
+&lt;h1 id=&quot;bonus-2-adding-a-dumb-ap-option&quot;&gt;Bonus 2: Adding a “Dumb AP” option&lt;/h1&gt;
+&lt;p&gt;Turns out there is interest for another use case for this little device. And that is acting as a dumb AP by plugging it into an ethernet port of a network and allowing access over wifi to that network (same subnet).
+This can be done without breaking our tunnelling configuration by simply creating an additional wifi interface with a different SSID and bridging it to wan.&lt;/p&gt;
+&lt;p&gt;In /etc/config/network under the&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config interface &lt;span class=&quot;string&quot;&gt;'wan'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;add the line:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;option &lt;span class=&quot;built_in&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;'bridge'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In /etc/config/wireless create a new interface and bridge it to wan by adding the following section:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config wifi-iface
+        option device &lt;span class=&quot;string&quot;&gt;'radio0'&lt;/span&gt;
+        option network &lt;span class=&quot;string&quot;&gt;'wan'&lt;/span&gt;
+        option mode &lt;span class=&quot;string&quot;&gt;'ap'&lt;/span&gt;
+        option ssid &lt;span class=&quot;string&quot;&gt;'DumbAP'&lt;/span&gt;
+        option encryption &lt;span class=&quot;string&quot;&gt;'psk2'&lt;/span&gt;
+        option key &lt;span class=&quot;string&quot;&gt;'mysuperpassword'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then type&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;/etc/init.d/network/reload
+wifi
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And it should start working (if not, try reboot).&lt;/p&gt;
+&lt;p&gt;Now you can use the default wifi for tunnelled connections to the internet and accessing the router for configuration purposes and the secondary wifi for accessing the network that the wan port attaches to.&lt;/p&gt;
+&lt;h1 id=&quot;keywords&quot;&gt;Keywords&lt;/h1&gt;
+&lt;p&gt;Openwrt, OpenVpn tunnel, Firewall tunnel, SSL tunnel, nexx wt3020.&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Flashing procedure for ax206 lcd photo frame with dpf-hack</title>
+      <link>http://pingec.si/blog/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/</link>
+      <pubDate>Sat, 01 Nov 2014 01:00:00 +0100</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/</guid>
+      <author></author>
+      <description>&lt;p&gt;&lt;a href=&quot;//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_020753.jpg&quot;&gt;
+    &lt;img src=&quot;//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_020753_320.jpg&quot; style=&quot;width:320px; float: left; margin-right:15px&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+A quick summary on how to flash an ax206-based lcd photo frame with “ax-dpf” hacked firmware.&lt;/p&gt;
+&lt;div style=&quot;display: block; clear: both;&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h1 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_020904.jpg&quot;&gt;
+    &lt;img src=&quot;//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_020904_320.jpg&quot; style=&quot;width:320px;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;AX206 based LCD photo frame&lt;/li&gt;
+&lt;li&gt;linux (in my case default &lt;strong&gt;Kali Linux 1.0.9&lt;/strong&gt; VMware 64 bit (amd64) image hosted on windows 8.1 x64)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;procedure&quot;&gt;Procedure&lt;/h1&gt;
+&lt;h2 id=&quot;compile-firmware&quot;&gt;Compile firmware&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/dpf-ax-code.zip&quot;&gt;mirror in case svn disappears&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;svn checkout svn://svn.code.sf.net/p/dpf-ax/code/trunk dpf-ax-code
+&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt; dpf-ax-code
+make all
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In best case scenario, that will build firmware images without problems (it also compiles lcd4linux along the way). I encountered a few problems and fixed them with:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;automake needed:&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;apt-get install automake
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;missing or wrong (too new from apt-get) version of sdcc (2.9 is required):
+Download source from &lt;a href=&quot;http://sourceforge.net/projects/sdcc/files/sdcc-linux-x86/2.9.0/&quot;&gt;http://sourceforge.net/projects/sdcc/files/sdcc-linux-x86/2.9.0/&lt;/a&gt; or &lt;a href=&quot;/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/sdcc-2.9.0-i386-unknown-linux2.5.tar.bz2&quot;&gt;from mirror&lt;/a&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;tar xjf sdcc-&lt;span class=&quot;number&quot;&gt;2.9&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;-i386-unknown-linux2.&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;.tar.bz2
+cp -r sdcc/bin /usr/&lt;span class=&quot;built_in&quot;&gt;local&lt;/span&gt;
+cp -r sdcc/share /usr/&lt;span class=&quot;built_in&quot;&gt;local&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;“ImportError: No module named intelhex” in compile.py:
+Download &lt;a href=&quot;http://www.bialix.com/intelhex/intelhex-1.5.zip&quot;&gt;http://www.bialix.com/intelhex/intelhex-1.5.zip&lt;/a&gt; or &lt;a href=&quot;/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/intelhex-1.5.zip&quot;&gt;mirrored&lt;/a&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;python setup.py install
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Now “make all” completes without errors.&lt;/p&gt;
+&lt;h2 id=&quot;identify-device&quot;&gt;Identify device&lt;/h2&gt;
+&lt;p&gt;Connect the lcd photo frame to the PC and enable usb mode in the photo frame menu (Menu-&amp;gt;Usb connect-&amp;gt;Yes).
+In my case /dev/sg2 and /dev/sr1 show up, this is the output of dmesg:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;[ &lt;span class=&quot;number&quot;&gt;4895.605593&lt;/span&gt;] usb &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;2.2&lt;/span&gt;: new full-speed USB device number &lt;span class=&quot;number&quot;&gt;12&lt;/span&gt; using uhci_hcd
+[ &lt;span class=&quot;number&quot;&gt;4895.977180&lt;/span&gt;] usb &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;2.2&lt;/span&gt;: New USB device found, idVendor=&lt;span class=&quot;number&quot;&gt;1908&lt;/span&gt;, idProduct=&lt;span class=&quot;number&quot;&gt;0102&lt;/span&gt;
+[ &lt;span class=&quot;number&quot;&gt;4895.977186&lt;/span&gt;] usb &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;2.2&lt;/span&gt;: New USB device strings: Mfr=&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;, Product=&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, SerialNumber=&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;
+[ &lt;span class=&quot;number&quot;&gt;4895.977189&lt;/span&gt;] usb &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;2.2&lt;/span&gt;: Product: Digital Photo Frame
+[ &lt;span class=&quot;number&quot;&gt;4895.977191&lt;/span&gt;] usb &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;2.2&lt;/span&gt;: Manufacturer: BUILDWIN
+[ &lt;span class=&quot;number&quot;&gt;4895.977193&lt;/span&gt;] usb &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;2.2&lt;/span&gt;: SerialNumber: &lt;span class=&quot;number&quot;&gt;200807101900000000&lt;/span&gt;
+[ &lt;span class=&quot;number&quot;&gt;4896.002072&lt;/span&gt;] usb-storage &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;2.2&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;1.0&lt;/span&gt;: USB Mass Storage device detected
+[ &lt;span class=&quot;number&quot;&gt;4896.002346&lt;/span&gt;] scsi5 : usb-storage &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;2.2&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;1.0&lt;/span&gt;
+[ &lt;span class=&quot;number&quot;&gt;4897.020217&lt;/span&gt;] scsi &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;: CD-ROM            buildwin  Photo Frame     &lt;span class=&quot;number&quot;&gt;1.01&lt;/span&gt; PQ: &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; ANSI: &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;
+[ &lt;span class=&quot;number&quot;&gt;4897.036154&lt;/span&gt;] sr1: scsi3-mmc drive: &lt;span class=&quot;number&quot;&gt;40&lt;/span&gt;x/&lt;span class=&quot;number&quot;&gt;40&lt;/span&gt;x writer &lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt;/rw xa/form2 cdda tray
+[ &lt;span class=&quot;number&quot;&gt;4897.036771&lt;/span&gt;] sr &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;: Attached scsi CD-ROM sr1
+[ &lt;span class=&quot;number&quot;&gt;4897.037868&lt;/span&gt;] sr &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;: Attached scsi generic sg2 &lt;span class=&quot;built_in&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;root@kali:~/Desktop/dpf-ax-code/tools&lt;span class=&quot;comment&quot;&gt;# python identify.py /dev/sr1&lt;/span&gt;
+Detecting &amp;amp; reading dpf flash...
+Opening generic SCSI device &lt;span class=&quot;string&quot;&gt;'/dev/sr1'&lt;/span&gt;
+Manufacturer: Macronix
+Size        : &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt; MB
+Reading &lt;span class=&quot;number&quot;&gt;200000&lt;/span&gt; bytes from flash...
+Flash written to file &lt;span class=&quot;string&quot;&gt;'fulldump_20141101-194435.bin'&lt;/span&gt;.
+
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; firmware.............: Found (buildwin, &lt;span class=&quot;number&quot;&gt;320&lt;/span&gt;x240 px).
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; Openwin..............: Found.
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; L&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt;IniTbl............: Found.
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; backlight &amp;amp; contrast.: Found, Found.
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; known signatures.....: Found.
+
+Your dpf is compatible with model [&lt;span class=&quot;string&quot;&gt;'taobao'&lt;/span&gt;].
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ah-ha! Our device corresponds to profile/image named ‘&lt;strong&gt;taobao&lt;/strong&gt;‘.&lt;/p&gt;
+&lt;p&gt;Or you can do it in two steps:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;root@kali:~/Desktop/dpf-ax-code/tools&lt;span class=&quot;comment&quot;&gt;# python fulldump.py /dev/sr1&lt;/span&gt;
+Opening generic SCSI device &lt;span class=&quot;string&quot;&gt;'/dev/sr1'&lt;/span&gt;
+Manufacturer: Macronix
+Size        : &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt; MB
+Reading &lt;span class=&quot;number&quot;&gt;200000&lt;/span&gt; bytes from flash...
+Flash written to file &lt;span class=&quot;string&quot;&gt;'fulldump_20141101-194631.bin'&lt;/span&gt;.
+
+root@kali:~/Desktop/dpf-ax-code/tools&lt;span class=&quot;comment&quot;&gt;# python identify.py fulldump_20141101-194631.bin&lt;/span&gt;
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; firmware.............: Found (buildwin, &lt;span class=&quot;number&quot;&gt;320&lt;/span&gt;x240 px).
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; Openwin..............: Found.
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; L&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt;IniTbl............: Found.
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; backlight &amp;amp; contrast.: Found, Found.
+Looking &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; known signatures.....: Found.
+
+Your dpf is compatible with model [&lt;span class=&quot;string&quot;&gt;'taobao'&lt;/span&gt;].
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;flashing-hacked-firmware&quot;&gt;Flashing hacked firmware&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;root@kali:~/Desktop/dpf-ax-code/tools&lt;span class=&quot;comment&quot;&gt;# python restore.py ../src/fw_taobao.bin -f&lt;/span&gt;
+Found AX206 DPF
+Error: Failed to claim usb device!
+Possibly you have to detach the device from hid.
+Use hiddetach from the fw folder: &lt;span class=&quot;string&quot;&gt;'sudo fw/hiddetach'&lt;/span&gt;
+                       or libhid: &lt;span class=&quot;string&quot;&gt;'sudo libhid-detach-device 1908:3318'&lt;/span&gt;
+Traceback (most recent call last):
+  File &lt;span class=&quot;string&quot;&gt;&quot;restore.py&quot;&lt;/span&gt;, line &lt;span class=&quot;number&quot;&gt;25&lt;/span&gt;, &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &amp;lt;module&amp;gt;
+    d = dpf.open(&lt;span class=&quot;string&quot;&gt;&quot;usb0&quot;&lt;/span&gt;)
+SystemError: Failed to open port:
+Unknown error
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We need to enter bootloader mode. Press and hold the reset button, press and hold the menu button, release reset button, wait a second and release menu. The screen should be blank(black) but the device should be detectable via usb.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;root@kali:~/Desktop/dpf-ax-code/tools&lt;span class=&quot;comment&quot;&gt;# ./hiddetach &lt;/span&gt;
+Detaching dpf at &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;2.2&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;1.0&lt;/span&gt;... done.
+
+root@kali:~/Desktop/dpf-ax-code/tools&lt;span class=&quot;comment&quot;&gt;# python restore.py ../src/fw_taobao.bin -f&lt;/span&gt;
+Found AX206 DPF (bootloader)
+Manufacturer: Macronix
+Size        : &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt; MB
+Erase full flash...
+Flashing sector &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;...
+Flashing sector &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;...
+Flashing sector &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;...
+Flashing sector &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;...
+Flashing sector &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;...
+Flashing sector &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;...
+Executing applet..
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That’s it. Now you should see a new splash screen together with new menus.&lt;/p&gt;
+&lt;p&gt;Now you can use lcd4linux to display all sorts of data on it.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_214045_downsized.png&quot;&gt;
+    &lt;img src=&quot;//pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/IMG_20141102_214045_downsized_320.png&quot; style=&quot;width:320px;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&quot;compiling-lcd4linux-with-dpf-driver-on-beaglebone-black&quot;&gt;Compiling lcd4linux with dpf driver on BeagleBone Black&lt;/h1&gt;
+&lt;p&gt;Tested on debian console img (debian-7.7-console-armhf-2014-10-29).&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;sudo apt-get install subversion make automake gcc libusb-dev python-dev pkg-config autoconf gettext libtool libjpeg62-dev
+sudo ln &lt;span class=&quot;operator&quot;&gt;-s&lt;/span&gt; /usr/bin/aclocal /usr/bin/aclocal-&lt;span class=&quot;number&quot;&gt;1.14&lt;/span&gt;
+sudo ln &lt;span class=&quot;operator&quot;&gt;-s&lt;/span&gt; /usr/bin/automake /usr/bin/automake-&lt;span class=&quot;number&quot;&gt;1.14&lt;/span&gt;
+svn checkout svn://svn.code.sf.net/p/dpf-ax/code/trunk dpf-ax-code
+&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt; dpf-ax-code
+mkdir lcd4linux
+mkdir lcd4linux/m4
+&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt; lcd4linux
+autoreconf -fvi
+&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt; ..
+make all
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It will fail to compile firmware images because it needs sdcc2.9 but it does not matter because those can be prepared on another machine, we only only need to compile lcd4linux and dpf driver to use a DPF frame on the beaglebone.
+lcd4linux should be run with sudo and make sure the config is chowned to root:root and chmoded to 700.&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Tunelling RDP over SSH through NAT on both sides</title>
+      <link>http://pingec.si/blog/blog/articles/tunelling-rdp-over-ssh-through-nat-on-both-sides/</link>
+      <pubDate>Sat, 06 Sep 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/tunelling-rdp-over-ssh-through-nat-on-both-sides/</guid>
+      <author></author>
+      <description>&lt;p&gt;A short recipe on how to establish a rdp session from machine A to machine B even though both machines sit behind a NAT (and/or firewall)…&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+&lt;p&gt;This is another note-to-myself post because digging the same recipe out of scripts in my filesystem is a very tedious task.&lt;/p&gt;
+&lt;p&gt;The problem: we have two machines, both behind NAT/firewall and we would like to RDP from one to the other over the internet even though we do not have the option of opening/forwarding any ports on the public interface and through the firewall. We use ssh tunnels through a third machine. This works for any TCP connection really, it is not limited to RDP.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/articles/tunelling-rdp-over-ssh-through-nat-on-both-sides/network_setup.PNG&quot; alt=&quot;Alt text&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;requirements&quot;&gt;Requirements&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A ssh server running a ssh server (in my case a cheap OpenWrt router)&lt;/li&gt;
+&lt;li&gt;plink.exe on both host and client rdp machines&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;solution&quot;&gt;Solution&lt;/h2&gt;
+&lt;p&gt;Let’s say the ssh server’s address is ssh.example.com.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;On rdp host machine run:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;plink.exe -N -C -v -R &lt;span class=&quot;number&quot;&gt;6000&lt;/span&gt;:localhost:&lt;span class=&quot;number&quot;&gt;3389&lt;/span&gt; sshuser@ssh.example.com -pw password
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;On rdp client machine run:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;plink.exe -N -C -v -L &lt;span class=&quot;number&quot;&gt;5555&lt;/span&gt;:localhost:&lt;span class=&quot;number&quot;&gt;6000&lt;/span&gt; sshuser@ssh.example.com -pw password
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;When both tunnels are established, on rdp client machine open remote desktop client and connect to:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;localhost:&lt;span class=&quot;number&quot;&gt;5555&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;addendum-setting-up-a-ssh-only-user-without-shell-on-openwrt&quot;&gt;Addendum: Setting up a ssh-only user without shell on OpenWrt&lt;/h2&gt;
+&lt;p&gt;When connecting with a no shell user, -N switch is compulsory.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# (14.07-rc3, r42056)&lt;/span&gt;
+&lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;'sshuser:x:1000:1000:User for ssh tunnels:/var:/bin/false'&lt;/span&gt; &amp;gt;&amp;gt;/etc/passwd
+&lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;'sshuser:x:15020:0:99999:7:::'&lt;/span&gt; &amp;gt;&amp;gt;/etc/shadow
+&lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;'sshuser:x:1000:'&lt;/span&gt; &amp;gt;&amp;gt;/etc/group
+passwd sshuser
+&lt;span class=&quot;comment&quot;&gt;# Turns out dropbear will reject (message is authpriv.warn dropbear[2378]: User 'sshuser' has invalid shell, rejected) authentication without /bin/false in /etc/shells even though it makes no sense.&lt;/span&gt;
+&lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;'/bin/false'&lt;/span&gt; &amp;gt;&amp;gt; /etc/shells
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;keywords-&quot;&gt;Keywords:&lt;/h3&gt;
+&lt;p&gt;ssh tunnel, ssh reverse tunnel, remote desktop, rdp
+defeating NAT, defeating firewall, tcp over ssh
+rdp over ssh&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Apache 2.4.9 WebDAV DirectoryIndex problem</title>
+      <link>http://pingec.si/blog/blog/articles/wamp-apache-2.4.9-webdav-index.html-directoryindex-problem/</link>
+      <pubDate>Fri, 27 Jun 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/wamp-apache-2.4.9-webdav-index.html-directoryindex-problem/</guid>
+      <author></author>
+      <description>&lt;p&gt;A while ago I upgraded Apache running on my Windows machine from 2.2 to 2.4 (2.4.9 to be exact). I did so by installing the WampServer stack. Some things stopped working and I was able to fix most of them but one. My WebDAV setup stopped working after the migration. Since I rarely use it I let it be but today I decided to dig into it and have found the problem to be a bug in Apache 2.4.x (could be other versions too).&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;symptoms&quot;&gt;Symptoms&lt;/h2&gt;
+&lt;p&gt;I did some debugging. A basic webdav config with digest auth would look something like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-Apache&quot;&gt;Alias /webdav &amp;quot;c:/wamp/www/webdav&amp;quot;
+&amp;lt;Location /webdav &amp;gt;        
+    Order allow,deny
+    Allow from all    
+    Dav On
+
+    AuthType Digest
+    AuthName DAV-upload
+    AuthDigestProvider file
+    AuthUserFile &amp;quot;c:/wamp/blahblah.passwd&amp;quot;
+
+    Require valid-user
+&amp;lt;/Location&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This however stopped working for me with Apache 2.4.9. When trying to map the webdav location to a windows drive I would get an error: “The network path was not found. Error code 0x80070035.”&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/articles/wamp-apache-2.4.9-webdav-index.html-directoryindex-problem/windows8.1-apache2.4.9-webdav-index.html-directoryindex-problem.png&quot; alt=&quot;Alt text&quot;&gt;&lt;/p&gt;
+&lt;p&gt;In the background a request like this is sent:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;PROPFIND http://example.com/webdav/ HTTP/1.1
+User-Agent: Microsoft-WebDAV-MiniRedir/6.3.9600
+Depth: 0
+translate: f
+Connection: Keep-Alive
+Content-Length: 0
+Host: example.com
+Authorization: Digest username=&amp;quot;someUser&amp;quot;,realm=&amp;quot;webdav&amp;quot;,nonce=&amp;quot;5a2a2178c007e77ba8935157451cf3&amp;quot;,uri=&amp;quot;/webdav/&amp;quot;,cnonce=&amp;quot;4091fa2ad1af5481ce26f4a90fb962&amp;quot;,nc=00000001,algorithm=MD5,response=&amp;quot;507fa5932dd63682cf2c10c6746a6b&amp;quot;,qop=&amp;quot;auth&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;And a response like this is received:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;HTTP/1.1 405 Method Not Allowed
+Date: Fri, 27 Jun 2014 06:46:57 GMT
+Server: Apache
+Allow: GET,HEAD,POST,OPTIONS,TRACE
+Content-Length: 245
+Keep-Alive: timeout=5, max=97
+Connection: Keep-Alive
+Content-Type: text/html; charset=iso-8859-1
+
+&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//IETF//DTD HTML 2.0//EN&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;
+&amp;lt;title&amp;gt;405 Method Not Allowed&amp;lt;/title&amp;gt;
+&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;
+&amp;lt;h1&amp;gt;Method Not Allowed&amp;lt;/h1&amp;gt;
+&amp;lt;p&amp;gt;The requested method PROPFIND is not allowed for the URL /webdav/index.html.&amp;lt;/p&amp;gt;
+&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;That appended “index.html” made me think, so I tried renaming it. And bingo! WebDAV started working. Armed with this clue I googled some more and finally found a report of a &lt;a href=&quot;https://issues.apache.org/bugzilla/show_bug.cgi?id=54914&quot;&gt;bug in Apache causing such behavior&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;solution&quot;&gt;Solution&lt;/h2&gt;
+&lt;p&gt;The simplest solution is to apply this workaround to all your WebDAV-enabled locations:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-Apache&quot;&gt;&amp;lt;Limit PROPFIND&amp;gt;
+DirectoryIndex never-encounterable-file-name.html
+&amp;lt;/Limit&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;keywords-&quot;&gt;Keywords:&lt;/h3&gt;
+&lt;p&gt;Apache 2.4 wamp webdav directoryindex index.html problem.
+The network path was not found. Error code 0x80070035.
+PROPFIND 405 Method Not Allowed.
+The requested method PROPFIND is not allowed for the URL /index.html.&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Windows 8.1 N Nexus 5 missing driver (MTP)</title>
+      <link>http://pingec.si/blog/blog/articles/windows-8.1-N-Nexus5-MTP-not-working-/</link>
+      <pubDate>Tue, 10 Jun 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/windows-8.1-N-Nexus5-MTP-not-working-/</guid>
+      <author></author>
+      <description>&lt;p&gt;I would never have expected that hooking up a Nexus 5 phone could be a PITA on a Windows 8.1 N machine.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;symptoms&quot;&gt;Symptoms&lt;/h2&gt;
+&lt;p&gt;So you have a freshly installed Windows 8.1 N machine and you want to transfer some photos from your Nexus 5. You connect the two with a USB cable and are unpleasantly surprised. Windows is having troubles with driver installation for the Nexus 5.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/articles/windows-8.1-N-Nexus5-MTP-not-working-/0.png&quot; alt=&quot;Nexus 5 driver problem&quot;&gt;&lt;/p&gt;
+&lt;p&gt;You can try forcing Windows to recheck for drivers, downloading and manually installing them, installing Adb Usb Drivers, but “The drivers for this device are not installed. (Code 28)” message will not go away.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/articles/windows-8.1-N-Nexus5-MTP-not-working-/1.png&quot; alt=&quot;Nexus 5 driver problem2&quot;&gt;&lt;/p&gt;
+&lt;p&gt;Then after lots of Googling I stumbled upon a suggestion to install the “Media Feature Pack for N and KN versions of Windows 8.1”. It immediately hit me, this must be it. And I got confirmation after reading &lt;a href=&quot;http://support.microsoft.com/kb/2929699&quot;&gt;this&lt;/a&gt; which explicitly states that the following funcionality is &lt;strong&gt;excluded&lt;/strong&gt; from &lt;strong&gt;N&lt;/strong&gt; and &lt;strong&gt;KN&lt;/strong&gt; editions of Windows 8.1&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Windows 8.1 Portable Devices (WPD) infrastructure. Communicates with attached media and storage devices, including devices that support the Media Transfer Protocol. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;solution&quot;&gt;Solution&lt;/h2&gt;
+&lt;p&gt;To get this funcionality you must download and install the &lt;a href=&quot;http://www.microsoft.com/en-us/download/details.aspx?id=40744&quot;&gt;Media Feature Pack for N and KN versions of Windows 8.1&lt;/a&gt; which is quite big (85MB) and installs lots of other features you don’t really need at this point. AFAIK there is no simple way around this but at least we can access our MTP phones over USB now.&lt;/p&gt;
+&lt;h2 id=&quot;comment&quot;&gt;Comment&lt;/h2&gt;
+&lt;p&gt;I don’t know why this feature was stripped from the N edition but from my point of view this is not cool. Especially since it’s quite hard for an average user to figure out where the problem is. If they remove a feature they should at least provide a mechanism of telling the user on how to make it work or offering to install this functionality automatically like they do for other drivers.&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Hyper-V Server 2012 R2 remote management in a workgroup</title>
+      <link>http://pingec.si/blog/blog/articles/hyper-v-server-2012-R2-remote-management-without-domain-controller/</link>
+      <pubDate>Fri, 06 Jun 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/hyper-v-server-2012-R2-remote-management-without-domain-controller/</guid>
+      <author></author>
+      <description>&lt;p&gt;Being able to remotely manage a Hyper-V Server 2012 R2 machine is a must but for me it proved not so straight-forward as I would have expected it to be when the machine is in a &lt;em&gt;workgroup and not in a domain&lt;/em&gt;. Just in case I ever forget about any steps, I am re-posting a copy of these very useful instructions which make Hyper-V manager, firewall management and server manager work remotely.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Taken from &lt;a href=&quot;http://social.technet.microsoft.com/Forums/windowsserver/en-US/fe80f0aa-0697-4657-a1da-19d36b036698/guide-to-remote-manage-hyperv-servers-and-vms-in-workgroups-or-standalone&quot;&gt;here&lt;/a&gt; written by &lt;a href=&quot;http://social.technet.microsoft.com/profile/michael%20star/?ws=usercard-mini&quot;&gt;Michael Star&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+This guide is based on the following 3 products:
+Windows server 2012 (core)
+Windows 8
+Hyper-V server v3 / Hyper-V server 2012
+
+The following guide will enable you to:
+
+1: remotely manage your Hyper-V Virtual Machines with Hyper-V manager
+2: remotely manage your Hyper-V servers' firewall with a MMC snap-in.
+3: remotely manage your Hyper-V server (2012) with server manager
+
+! This should also work for Core installations of server 2012, but I haven't tried.
+
+This guide is purely focussed on servers in a WORKGROUP, or as a stand alone.
+I CAN NOT tell you what you need to do to get it working in a domain.
+
+
+* You can run these commands straight from the console (Physically at the machine) or through RDP.
+* You will need to be logged on as an administrator.
+* Commands are listed in somewhat random order; I do however advise to follow the steps as listed.
+* Commands with ? in front of them are only ment to be helpfull for troubleshooting,
+* and to identify settings and changes made.
+* Commands and instructions with ! in front of them are mandatory.
+
+- server: means the server core or hyper-v server (non gui)
+- client: means the machine you want to use for remote administration.
+- Some commands are spread over 2 lines; be sure to copy the full syntax.
+
+&gt; To enable the Hyper-V manager to connect to your server, you need to perform the following 2 actions: (Assuming you have already installed the feature)
+1:
+! Client: Locate the C:\Windows\System32\Drivers\etc\hosts file.
+! right-click --&gt; properties --&gt; security
+! click --&gt; edit --&gt; add --&gt; YOURUSERNAME or Administrator --&gt; OK
+! then select this new user, and tick the &quot;modify&quot;-box under the &quot;allow&quot;-section.
+! apply the change, and close.
+! doubleclick the file, and open with notepad
+! add the ip-address and name of your server (no // or other crap needed)
+! Save the file
+# I recommend putting a shortcut to this file on the desktop.
+# If you change the ip-address of your server (e.g. move the server from staging to a live environment)
+# you might forget to do so in the hosts file.
+# Hyper-V manager, MMC, RSAT, and Server-manager all rely on the hosts-file to resolve the name.
+# some of these might connect to their respective service on an i.p.-level, but some don't.
+# This is the main reason you need to modify this file.
+
+! USE AN ELEVATED CMD/POWERSHELL PROMPT TO CONTINUE !
+# the next config needs to be done on windows 8.
+# It seems that it's already preconfigured under server 2012
+
+2:
+! Client: dcomcnfg
+! open component services --&gt; computers
+! right-click -&gt; my computer -&gt; properties
+! select &quot;COM SECURITY&quot; tab
+! under &quot;ACCESS PERMISSIONS&quot; select &quot;edit limits&quot;
+! select &quot;ANONYMOUS LOGON&quot;, and tick &quot;remote access&quot; under ALLOW
+# Without this adjustment, you can't connect to your Hyper-V server
+# with the Hyper-V manager if you're not in a domain.
+
+&gt; And if you haven't done so already... make sure you have enabled remote management number 4 on the Hyper-V server console.
+----------------------------------------------------------------------
+
+
+&gt; Next, is to get the MMC firewall snap-in working.
+   The reason for this, is to have a GUI available to configure it.
+   If you're happy without it, you may skip this and use a shell instead to do so.
+
+? server: netsh advfirewall show currentprofile
+# shows the current profile (public/domain/private) and its settings
+# depending on your needs, you should set the right profile to fit your needs.
+# You can easily do this when the MMC snap-in is done. (after you've followed these steps)
+
+! server: netsh advfirewall set currentprofile settings remotemanagement enable
+# enables remote management of the firewall on an application level 
+# (In other words: allows the firewall to be remotely managed)
+
+! server: netsh advfirewall firewall set rule group=&quot;Windows Firewall Remote Management&quot; new enable=yes
+# allows remote management of the firewall, through the required firewall ports with TCP protocol.
+# 4 rules will be updated to allow access: public &amp; Domain, dynamic and endpoint-mapper.
+# You can disable/add/change the rule from the MMC snap-in after finishing this guide.
+# e.g. set the firewall through the MMC-GUI to only allow specific ip-addresses etc.
+
+? server: netsh advfirewall firewall show rule all
+# Shows a list of available rules, and their current state.
+# when run from cmd, the list exceeds the maximum length for review.
+# (from cmd,type:) start powershell, and run the command from there.
+
+! Client: cmdkey /add:YOURSERVERNAME /user:USERNAMEONTHESERVER /pass:THEPASSWORDOFTHATUSER
+# I recommend you to use a username with enough privileges for management
+# All capital letters need to be replaced with your input
+# CMD answers &quot;credential added successfully&quot; when you're done
+
+! Client: locate MMC, and run it as an admin.
+# In windows 8/2012, go to search and type MMC. Right-click the icon, 
+# and choose run as admin on the bar below.
+
+! Client: application MMC: select &quot;file&quot; --&gt; Add/remove snap-in 
+! --&gt; (left pane) scroll down to &quot;windows firewall&quot; --&gt; select and click &quot;add&quot;
+! select &quot;another computer&quot;
+! type the name of the server you want to manage (NO workgroup/ or //, just same name as you typed for cmdkey)
+
+* Part 2 is done.
+# Have a look by doubleclicking the firewall icon in the left pane.
+# It looks and works the same as the GUI version that you are familiar with.
+
+-------------------------------------------------------------------------------
+
+! Next is the Server Manager.
+# Follow the steps listed to get your server listed and manageable in the server manager.
+
+
+! Client: Open the created Firewall snap-in for your server.
+! Find the 3 &quot;Remote Event Log Management&quot; entries in the list of INBOUND rules, and enable them.
+! Open powershell --&gt; in cmd windows, type: start powershell
+! run the following line in powershell
+! Client: in C:\Windows\system32&gt; set-item WSMAN:\localhost\client\trustedhosts -value YOURSERVERNAME -concatenate
+# WinRM Security Configuration.
+# This command modifies the TrustedHosts list for the WinRM client. The computers in the TrustedHosts list might not be
+# authenticated. The client might send credential information to these computers. Are you sure that you want to modify
+# this list?
+# [Y] Yes  [N] No  [S] Suspend  [?] Help (default is &quot;Y&quot;): y
+#
+# I recommend to choose yes; unless you like to pull some more hairs...
+
+! server: winrm qc
+# WinRM service is already running on this machine.
+# WinRM is not set up to allow remote access to this machine for management.
+# The following changes must be made:
+# Configure LocalAccountTokenFilterPolicy to grant administrative rights remotely
+# to local users.
+# Make the changes? y / n
+!  select yes
+
+! Client: open the server 2012 server manager
+! click manage -&gt; add server
+! select the DNS tab, and type the name of your server
+
+Done.
+
+You can now manage your remote server through the familiar computer management GUI.
+
+! Right-click your remote server, and select &quot;Computer Management&quot;
+
+--------------------------------------------------------------------------
+
+A few side notes:
+
+? The Performance tab seems to list the local machine's performance, in stead of the remote servers'
+? If you want Windows server backup, you need to right-click the server in the server manager, and select &quot;add roles and features.
+? it will then become available under the &quot;computer management&quot; of the remote server.
+
+
+If you liked this guide you may thank my employer, Mr. Chris W.
+for giving me the time to work it all out.
+Cheers!
+&lt;/code&gt;&lt;/pre&gt;</description>
+    </item>
+    <item>
+      <title>About TypeScript's type system</title>
+      <link>http://pingec.si/blog/blog/articles/typescript-type-system/</link>
+      <pubDate>Thu, 17 Apr 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/typescript-type-system/</guid>
+      <author></author>
+      <description>&lt;p&gt;Sometimes TypesScript’s type system does not behave as one would expect it to…&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;typescript-s-type-system-is-unsound&quot;&gt;TypeScript’s type system is unsound&lt;/h2&gt;
+&lt;p&gt;A sound type system never permits an incorrectly typed system to pass type checking. Well, it happens in TypeScript.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.typescriptlang.org/Playground#src=%0Aclass%20Animal%20%7B%7D%0A%20%0Aclass%20Snake%20extends%20Animal%20%7B%0A%20%20%20%20slither()%20%7B%0A%20%20%20%20%20%20%20%20alert(%22Slithering!%22)%0A%20%20%20%20%7D%0A%7D%0A%20%0Aclass%20Horse%20extends%20Animal%20%7B%7D%0A%0A%20%2F%2Farrays%20are%20mutable%20and%20covariant%0Avar%20a%3A%20Snake%5B%5D%20%3D%20%5Bnew%20Snake()%5D%3B%0Avar%20b%3A%20Animal%5B%5D%20%3D%20a%3B%0Ab%5B0%5D%20%3D%20new%20Horse()%3B%0A%20%0Avar%20notASnake%3A%20Snake%20%3D%20a%5B0%5D%3B%0AnotASnake.slither()%3B%09%2F%2Fthis%20will%20fail%20at%20runtime&quot;&gt;&lt;img src=&quot;unsound.PNG&quot; style=&quot;width:auto; height:auto&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.typescriptlang.org/Playground#src=%0Ainterface%20IA%20%7B%20bar()%3A%20void%20%7D%0Ainterface%20IB%20%7B%20bar()%3A%20void%3B%20foo()%3A%20void%3B%20%7D%0A%0Afunction%20fn(passedFn%3A%20(a%3A%20IA)%20%3D%3E%20void)%20%7B%0A%20%20var%20a%3AIA%20%3D%20%7Bbar%3A%20function()%7B%7D%7D%3B%20%0A%20%20passedFn(a)%3B%20%0A%7D%0A%0A%2F%2F%20compiles%20but%20throws%20TypeError%20at%20runtime!%0Afn((b%3A%20IB)%20%3D%3E%20b.foo())%3B&quot;&gt;&lt;img src=&quot;unsound2.PNG&quot; style=&quot;width:auto; height:auto&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>An introduction to TypeScript 1.0</title>
+      <link>http://pingec.si/blog/blog/articles/an-introduction-to-typescript-1.0/</link>
+      <pubDate>Wed, 16 Apr 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/an-introduction-to-typescript-1.0/</guid>
+      <author></author>
+      <description>&lt;p&gt;I have been using TypeScript for a while now. From 0.7 to 1.0 it changed quite a lot but I think what we have now is a stable language spec. In this post I will explore what TypeScript brings to the table over JavaScript. &lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In this post I list some general observations regarding TypeScript that I’ve found interesting and/or important to know. I skip showing/explaining the actual syntax and patterns of the language. There is a &lt;a href=&quot;http://www.typescriptlang.org/Handbook&quot;&gt;good guide&lt;/a&gt; for that.&lt;/p&gt;
+&lt;h2 id=&quot;what-is-typescript-in-a-few-words-&quot;&gt;What is TypeScript in a few words?&lt;/h2&gt;
+&lt;p&gt;Syntax sugar and wrapper around common JavaScript patterns for better readability (classes, arrow functions) + module system(for namespaces or AMD/CommonJs modules) + static typing system + powerful, type-aware tooling = &lt;em&gt;Amazing developer experience.&lt;/em&gt; At least that’s my take on it.&lt;/p&gt;
+&lt;h2 id=&quot;superset-of-javascript&quot;&gt;Superset of JavaScript&lt;/h2&gt;
+&lt;p&gt;TypeScript is a superset of JavaScript. What this means is that you can take any existing JavaScript code and it already is valid TypeScript. Or at least the TypeScript compiler will eat it. This is an important fact and means that all existing JavaScript libraries will work fine with your TypeScript code.&lt;/p&gt;
+&lt;h2 id=&quot;attempts-to-be-future-proof&quot;&gt;Attempts to be future-proof&lt;/h2&gt;
+&lt;p&gt;The added TypeScript syntax is intentionally based on specs/drafs of the future JavaScript. The intention is to bring features of the JavaScript of the future to the present. For example TypeScript implements keywords/constructs like &lt;em&gt;class&lt;/em&gt;, &lt;em&gt;extends&lt;/em&gt;, &lt;em&gt;super&lt;/em&gt;, &lt;em&gt;lambda functions&lt;/em&gt; and &lt;em&gt;rest parameters&lt;/em&gt; which are all in ES6 specs. Modules are not yet clearly specified in ES6 but are implemented in TS. Yield and generators are not yet implemented in TS but the roadmap for v 2.0 is to align it closely with ES6.&lt;/p&gt;
+&lt;h2 id=&quot;compiles-to-idiomatic-javascript&quot;&gt;Compiles to idiomatic javascript&lt;/h2&gt;
+&lt;p&gt;The TypeScript compiler produces very clean JavaScript. In fact the output JavaScript looks so natural and clean to me that I can write TypeScript code and then debug and step through the generated JavaScript code with ease. &lt;/p&gt;
+&lt;h2 id=&quot;open-source&quot;&gt;Open source&lt;/h2&gt;
+&lt;p&gt;Open source and Microsoft… I know, smells fishy, but the typescript compiler really is open source. This means that anyone can fork the compiler and that there is no excuse for editors not to support it. Also, the main repo, which is owned by Microsoft is, as of version 1.0, accepting pull requests.&lt;/p&gt;
+&lt;h2 id=&quot;editors&quot;&gt;Editors&lt;/h2&gt;
+&lt;p&gt;Support for TypeScript in Visual Studio is of course, first class. However, other editors are catching up. The TypeScript Playground editor is very good, I would say it is as good as Visual Studio and even better because it supports writing JSDoc comments while Visual Studio does not (even with Web Essentials). However, it is impossible to do serious, multi-file development through the web editor. For non-Windows users I would recommend Eclipse with Palantir plugin because it has good support for intellisense and refactoring as well. There are many IDE’s out there which are working on TypeScript support, but are not just there yet. &lt;a href=&quot;http://www.jetbrains.com/webstorm/&quot;&gt;WebStorm&lt;/a&gt;, &lt;a href=&quot;http://jbaron.github.io/cats/&quot;&gt;CATS&lt;/a&gt;, &lt;a href=&quot;http://brackets.io/&quot;&gt;Brackets&lt;/a&gt; with &lt;a href=&quot;https://github.com/fdecampredon/brackets-typescript&quot;&gt;brackets-typescript&lt;/a&gt;, &lt;a href=&quot;https://c9.io/&quot;&gt;Cloud9&lt;/a&gt; and more. &lt;/p&gt;
+&lt;p&gt;##Type system
+TypeScript’s core feature is its &lt;strong&gt;optional&lt;/strong&gt; typing system. When you add type annotations to your code, you get a powerful compile-time type-checking system which validates your code and disappears at runtime, leaving you with pure JavaScript.&lt;/p&gt;
+&lt;p&gt;Although it might not seem at first glance, TypeScript’s type system is quite interesting and novel. 
+It is not yet-another-typed-language that compiles to JavaScript because it allows us to use types only when we want to. Traditionally in a programming language you either have types or you don’t. However, in TypesScript they are optional and you can use them only in parts of your code. This is great for old code compatibility. For example you may leave the old JavaScript code untyped but add static typing to new code that you write.&lt;/p&gt;
+&lt;p&gt;TypeScript has a &lt;strong&gt;structural typing system&lt;/strong&gt; which is basically &lt;strong&gt;duck typing&lt;/strong&gt; at compile time (instead of runtime). In duck typing it is said that if an object quacks like a duck and looks like a duck then it is a Duck.&lt;/p&gt;
+&lt;p&gt;What this means is that interfaces and classes are compared based on their structure and not their identity like for example in C#.&lt;/p&gt;
+&lt;p&gt;Here is an example that demonstrates this: &lt;img src=&quot;typescript duck typing.PNG&quot; style=&quot;width:auto;&quot;&gt;
+&lt;a href=&quot;http://www.typescriptlang.org/Playground#src=interface%20Duck%20{%0A%20%20%20%20quack%3A%20%28%29%20%3D%3E%20void%3B%0A}%0A%0Avar%20quack%20%3D%20%28duck%3A%20Duck%29%20%3D%3E%20{%0A%20%20%20%20duck.quack%28%29%3B%0A}%0A%0Avar%20person%20%3D%20{%0A%20%20%20%20quack%3A%20%28%29%20%3D%3E%20console.log%28%22*Immitates%20a%20quack.*%22%29%0A}%0Avar%20duck%20%3D%20{%0A%20%20%20%20quack%3A%20%28%29%20%3D%3E%20console.log%28%22Quack!%22%29%0A}%0Avar%20snake%20%3D%20{%0A%20%20%20%20slither%3A%20%28%29%20%3D%3Econsole.log%28%22SsSsSs!%22%29%0A}%0A%0Aquack%28duck%29%3B%0Aquack%28person%29%3B%0Aquack%28snake%29%3B%20%20%20%2F%2Fsnake%20cannot%20quack%20and%20thus%20is%20not%20compatible%20with%20interface%20Duck&quot;&gt;TypeScript Playground link&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;type-inference&quot;&gt;Type inference&lt;/h2&gt;
+&lt;p&gt;The type checker is very smart and will infer types whenever it can. In practice this means that you have to add only few type annotations to get useful, type-enhanced code. Sometimes the typescript compiler is able to infer types just from the definition of a variable. And these types will flow through your code via the inference mechanism. Let’s take a look at this example which is pure JavaScript:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-javascript&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; cities = [&lt;span class=&quot;string&quot;&gt;'New York'&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;'London'&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;'Paris'&lt;/span&gt;]; 
+&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; n = cities.map(&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;c&lt;/span&gt;)&lt;/span&gt;{&lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; c.length}):
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At the same time if you feed this to the &lt;a href=&quot;http://www.typescriptlang.org/Playground#src=%0A%0Avar%20cities%20%3D%20[%27New%20York%27%2C%20%27London%27%2C%20%27Paris%27]%3B%0Avar%20n%20%3D%20cities.map%28%28c%29%3D%3Ec.length%29%3B%0A&quot;&gt;TypeScript compiler&lt;/a&gt;, it will be able to infer a bunch of things.&lt;/p&gt;
+&lt;p&gt;In the first line, it will see that the variable ‘cities’ is being defining as an array which contains only string literals and will thus treat it as a variable of type array of strings (string[]).&lt;/p&gt;
+&lt;p&gt;In the second line it will see a new variable named ‘n’ which stores whatever the .map call on cities returns. It will thus take a look if it can infer anything about that map method. And indeed it can. It knows that cities is an array of strings but it also knows all methods and their type signatures that are defined on an array, including map’s.&lt;/p&gt;
+&lt;p&gt;And so it will infer that the parameter of the callback function passed to the map method has to be of type string, since the array only contains strings. And it will see that the callback returns the length of that string (a number). It will finally conclude, that the map call will return an array of numbers which will be assigned to ‘n’. ‘n’ is thus of type array of numbers (number[]).&lt;/p&gt;
+&lt;p&gt;And indeed, , we get confirmation of this: &lt;img src=&quot;typescript type inference demo.png&quot; style=&quot;width:auto;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;As a consequence we get full intellisense on the elements of array ‘n’ as can be seen in the image below: &lt;img src=&quot;typescript type inference demo 2.png&quot; style=&quot;width:auto;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;Now that’s quite an enhancement for &lt;strong&gt;zero work.&lt;/strong&gt; What we gain in this small example is intellisense on all variables and type safety. The compiler will warn us if we try to use a type in an incorrect way (but still compile the code to JavaScript).&lt;/p&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;All in all I would say that TypesCript implements the correct features to enable large scale application managability. The most important part is the compile time type checker and the incredible tooling that is possible to implement on its shoulders (eg. code refactoring, intellisense).&lt;/p&gt;
+&lt;p&gt;There are a few quirks with the type system which are rare but can and will give you a headache if you ever stumble upon them. Also the modules system looks promising but there are some scenarios with node.js modules, where it gets tricky to integrate JavaScript modules with TypeScript ones seamlessly. I will cover both these areas in a futue post.&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Lenovo Yoga 2 Pro doesn't run too hot...</title>
+      <link>http://pingec.si/blog/blog/articles/yoga-2-pro-thermal-image/</link>
+      <pubDate>Sat, 12 Apr 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/yoga-2-pro-thermal-image/</guid>
+      <author></author>
+      <description>&lt;p&gt;I am sharing two thermal images of the Yoga 2 Pro. Click below on “more” to see them.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Today I’m showing some love to my Yoga. I want to share 2 thermal photos of the Yoga 2 Pro after 2 hours of a 1080p h.264 movie on my bed. Power adapter plugged in.&lt;/p&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+    &lt;img src=&quot;FLIR0065.jpg&quot; style=&quot;display:inline; width:auto;&quot; /&gt;
+    &lt;br&gt;
+    Top
+&lt;/div&gt;
+&lt;br&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+    &lt;img src=&quot;FLIR0067.jpg&quot; style=&quot;display:inline; width:auto;&quot; /&gt;
+    &lt;br&gt;
+    Bottom
+&lt;/div&gt;
+
+
+&lt;p&gt;Not too bad in my opinion…&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Lenovo Yoga 2 Pro Windows 8.1 reinstall notes</title>
+      <link>http://pingec.si/blog/blog/articles/yoga-2-pro-windows-8.1-reinstall-instructions/</link>
+      <pubDate>Fri, 11 Apr 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/yoga-2-pro-windows-8.1-reinstall-instructions/</guid>
+      <author></author>
+      <description>&lt;p&gt;I decided to get rid of the Lenovo bloatware, which had come preinstalled on my Lenovo Yoga 2 Pro and to reclaim space used by recovery partitions. Here is the recipe for a fresh install of Windows 8.1 with the OEM product key.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Note: The “wipe all partitions” steps are not optional, the installer will refuse to install on the original ones stating some GPT error.&lt;/p&gt;
+&lt;h2 id=&quot;steps-&quot;&gt;Steps:&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Obtain a Windows 8 ISO. This is not an easy feat if you only have an OEM product key. Not Microsoft nor Lenovo will help you. I used a RETAIL product key to download the ISO from Microsoft: &lt;a href=&quot;http://windows.microsoft.com/en-gb/windows-8/upgrade-product-key-only&quot;&gt;http://windows.microsoft.com/en-gb/windows-8/upgrade-product-key-only&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Apply the downloaded ISO to a USB flash drive and make it bootable. You can use an utility like &lt;a href=&quot;http://rufus.akeo.ie/&quot;&gt;Rufus&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Shut down Windows 8, wait for power button led to go blank. Boot up the ultrabook via the NOVO button (the tiny round one next to the power button).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;“Novo Button Menu” shows up. Go to “Bios Setup”-&amp;gt;”Boot”-&amp;gt;”Boot Mode” and set it to “Legacy Support”, also make sure “USB Boot” is enabled (should be by default).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Go to “Exit”-&amp;gt;”Exit Saving Changes”. Now uefi will boot original Windows from hdd again.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Repeat step 3 to get into “Novo Button Menu” again.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Go to “Boot Menu” and select whatever your USB device is called, Windows 8.1 installer will boot.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Installation setup will not prompt you for a product key, it will be read from the UEFI automagically.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;When at the partition table menu there will be a lot of partition, wipe them all (yes even the lenovo recovery and driver ones). Press Fn+Shift+F10 and use diskpart to wipe the partition table. Last line is optional.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; diskpart
+ select disk 0
+ clean
+ convert GPT
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Smooth sailing from this point on… All drivers can be downloaded from the Lenovo website.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&quot;http://pingec.si/blog/articles/yoga-2-pro-windows-8.1-reinstall-instructions/fresh%20Ytoga%202%20Pro.png&quot; alt=&quot;yoga 2 pro fresh install desktop&quot;&gt;
+&lt;img src=&quot;http://pingec.si/blog/articles/yoga-2-pro-windows-8.1-reinstall-instructions/disk%20space.PNG&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;other-tweaks&quot;&gt;Other tweaks&lt;/h2&gt;
+&lt;p&gt;Disable indexing while running on battery power:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;1) Launch mmc (Win+R, &amp;quot;mmc&amp;quot;)
+2) File -&amp;gt; Add/Remove Snap-In
+3) Group Policy Object Editor -&amp;gt; Add -&amp;gt; Local Computer -&amp;gt; Ok
+4) Expand Local Computer Policy -&amp;gt; Computer Configuration -&amp;gt; Administrative Templates -&amp;gt; Windows Components -&amp;gt; Search
+5) Find &amp;quot;Prevent indexing when running on battery power to conserve energy&amp;quot;
+6) Enable -&amp;gt; OK -&amp;gt; Close
+&lt;/code&gt;&lt;/pre&gt;</description>
+    </item>
+    <item>
+      <title>Exporting SSKJ dictionary</title>
+      <link>http://pingec.si/blog/blog/articles/sskj/</link>
+      <pubDate>Wed, 02 Apr 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/sskj/</guid>
+      <author></author>
+      <description>&lt;p&gt;A few years ago, a friend came to me for advice about solving her problem on how to access her digital copy of Dictionary of Standard Slovenian Language from her Android phone. She told me that there is no Android version and that she was using TeamViewer to query the dictionary installed on her desktop machine. Recently, the same problem has been brought up again by another person so following is a &lt;em&gt;hypothetical&lt;/em&gt; explanation of how I would have approached this problem. &lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h1 id=&quot;exporting-the-data&quot;&gt;Exporting the data&lt;/h1&gt;
+&lt;p&gt;Looks like reverse-engineering the database structure is the task ahead of us, or is it?
+Well this is a dictionary, the data is not hidden, it is just served definition-by-definition and why not export it that way?&lt;/p&gt;
+&lt;h2 id=&quot;autoit-to-the-rescue&quot;&gt;AutoIt to the rescue&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-avrasm&quot;&gt;Run(&lt;span class=&quot;string&quot;&gt;&quot;D:\Slovarji\ASP32\ASP32.EXE&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;&quot;&lt;/span&gt;,  @SW_MAXIMIZE)
+Local $file = FileOpen(&lt;span class=&quot;string&quot;&gt;&quot;SSKJ.txt&quot;&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)
+&lt;span class=&quot;keyword&quot;&gt;sleep&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;2000&lt;/span&gt;)
+$title = WinGetTitle(&lt;span class=&quot;string&quot;&gt;&quot;&quot;&lt;/span&gt;)
+Send(&lt;span class=&quot;string&quot;&gt;&quot;{TAB}&quot;&lt;/span&gt;)    &lt;span class=&quot;comment&quot;&gt;;focus record&lt;/span&gt;
+
+For $i = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; To &lt;span class=&quot;number&quot;&gt;42090&lt;/span&gt; Step &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;
+   Send(&lt;span class=&quot;string&quot;&gt;&quot;{TAB}&quot;&lt;/span&gt;)    &lt;span class=&quot;comment&quot;&gt;;focus record content&lt;/span&gt;
+   Send(&lt;span class=&quot;string&quot;&gt;&quot;^a&quot;&lt;/span&gt;)       &lt;span class=&quot;comment&quot;&gt;;select all&lt;/span&gt;
+   Send(&lt;span class=&quot;string&quot;&gt;&quot;^c&quot;&lt;/span&gt;)        &lt;span class=&quot;comment&quot;&gt;;copy&lt;/span&gt;
+   FileWrite($file, ClipGet() &amp;amp; @CRLF)   
+   Send(&lt;span class=&quot;string&quot;&gt;&quot;{TAB}&quot;&lt;/span&gt;)    &lt;span class=&quot;comment&quot;&gt;;focus search box&lt;/span&gt;
+   Send(&lt;span class=&quot;string&quot;&gt;&quot;{TAB}&quot;&lt;/span&gt;)    &lt;span class=&quot;comment&quot;&gt;;focus record&lt;/span&gt;
+   Send(&lt;span class=&quot;string&quot;&gt;&quot;{DOWN}&quot;&lt;/span&gt;)    &lt;span class=&quot;comment&quot;&gt;;move to next record&lt;/span&gt;
+Next
+
+FileClose($file)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This should produce a “SSKJ.txt” file where definitions are delimited with two CRLF’s.&lt;/p&gt;
+&lt;h1 id=&quot;querying-the-data&quot;&gt;Querying the data&lt;/h1&gt;
+&lt;p&gt;A simple way to then query the exported data si to read the definitions into memory and serve them on demand. Here is a simple draft implementation in node.js.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-javascript&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; lookup = {};
+&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; fs = &lt;span class=&quot;built_in&quot;&gt;require&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;'fs'&lt;/span&gt;);
+
+fs.readFile(&lt;span class=&quot;string&quot;&gt;'./SSKJ.txt'&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;'utf8'&lt;/span&gt;, &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;err, data&lt;/span&gt;) &lt;/span&gt;{
+
+    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (err) &lt;span class=&quot;keyword&quot;&gt;throw&lt;/span&gt; err;
+
+    data.split(&lt;span class=&quot;string&quot;&gt;'\r\n\r\n'&lt;/span&gt;).forEach( &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;element, index, array&lt;/span&gt;)&lt;/span&gt;{    
+
+        &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; key = element.slice(element.indexOf(&lt;span class=&quot;string&quot;&gt;&quot;\t&quot;&lt;/span&gt;)+&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;,element.indexOf(&lt;span class=&quot;string&quot;&gt;&quot; &quot;&lt;/span&gt;));
+        &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; value = element;
+        lookup[key] = element;        
+    });
+});
+
+&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; http = &lt;span class=&quot;built_in&quot;&gt;require&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;'http'&lt;/span&gt;);
+http.createServer(&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt; (&lt;span class=&quot;params&quot;&gt;req, res&lt;/span&gt;) &lt;/span&gt;{
+    res.writeHead(&lt;span class=&quot;number&quot;&gt;200&lt;/span&gt;, { &lt;span class=&quot;string&quot;&gt;'content-type'&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;'text/plain; charset=utf-8'&lt;/span&gt; });
+
+    &lt;span class=&quot;comment&quot;&gt;//url should be of format /sskj/keyword&lt;/span&gt;
+    &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; decoded = &lt;span class=&quot;built_in&quot;&gt;decodeURIComponent&lt;/span&gt;(req.url);
+    &lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(decoded);
+    &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; match = &lt;span class=&quot;regexp&quot;&gt;/\/sskj\/(.*)/&lt;/span&gt;.exec(decoded);
+    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (match &amp;amp;&amp;amp; match.length &amp;gt; &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)
+    {
+        &lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(match[&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;]);
+        &lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(lookup[match[&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;]]);
+        res.end(lookup[match[&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;]]);
+    }
+    &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;
+        res.end(&lt;span class=&quot;string&quot;&gt;'no match or bad request'&lt;/span&gt;);
+
+}).listen(&lt;span class=&quot;number&quot;&gt;1337&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;0.0.0.0&quot;&lt;/span&gt;);
+&lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(&lt;span class=&quot;string&quot;&gt;'server running at http://127.0.0.1:1337/ example url http://127.0.0.1:1337/sskj/trubadur'&lt;/span&gt;);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now it only needs a mobile app with a GUI for the user.&lt;/p&gt;
+&lt;p&gt;Also it would be useful to turn it into an offline mobile app where data is stored through SQLite and add word autocompletion but enough of hypothetical talk for today.&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>Randomizing guest wifi password with OpenWrt and a hacked digital photo frame</title>
+      <link>http://pingec.si/blog/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/</link>
+      <pubDate>Tue, 01 Apr 2014 02:00:00 +0200</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/</guid>
+      <author></author>
+      <description>&lt;p&gt;&lt;a href=&quot;//pingec.si/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/IMG_20130819_225553.jpg&quot;&gt;
+    &lt;img src=&quot;//pingec.si/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/IMG_20130819_225553_320.jpg&quot; style=&quot;width:320px; float: right;&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Let’s implement a guest wifi with passwords that change periodically (eg. every 24hours) and via a button press. Let’s display the current password on an LCD. This comes handy when you want to provide wifi access only to clients that are physically present in your lounge for that day and prevent password leaks and massive wifi sharing to all the buildings nearby.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;video width=&quot;80%&quot; controls&gt;
+  &lt;source src=&quot;VID_20130819_225724.mp4&quot; type=&quot;video/mp4&quot; preload=&quot;none&quot;&gt;
+  Your browser does not support the video tag.
+&lt;/video&gt;
+
+&lt;h1 id=&quot;prerequisites-&quot;&gt;Prerequisites:&lt;/h1&gt;
+&lt;h2 id=&quot;1-components-needed-&quot;&gt;1. Components needed:&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A router running OpenWrt with a USB port (eg. &lt;a href=&quot;http://wiki.openwrt.org/toh/tp-link/tl-wr1043nd&quot; title=&quot;Title&quot;&gt;TP-Link TL-WR1043ND&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;A USB DPF that can be hacked with the &lt;a href=&quot;http://picframe.spritesserver.nl/wiki/index.php/DPF_with_AppoTech_AX206&quot;&gt;“DPF-hack”&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;2-flash-the-dpf-with-custom-firmware-all-details-are-available-here-http-picframe-spritesserver-nl-wiki-index-php-dpf_with_appotech_ax206-hacking_details-&quot;&gt;2. Flash the DPF with custom firmware, all details are available &lt;a href=&quot;http://picframe.spritesserver.nl/wiki/index.php/DPF_with_AppoTech_AX206#Hacking_Details&quot;&gt;here&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Update: I have described the procedure in detail in a blog post as well. The post can be found &lt;a href=&quot;http://pingec.si/blog/articles/flashing-procedure-for-ax206-photo-frame-with-dpf-hack/&quot;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&quot;installing-the-lcd4linux-with-dpf-on-openwrt&quot;&gt;Installing the lcd4linux with DPF on OpenWrt&lt;/h1&gt;
+&lt;p&gt;There are multiple options:&lt;/p&gt;
+&lt;p&gt;You can try with…&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;opkg update
+opkg list | grep -E &lt;span class=&quot;string&quot;&gt;&quot;dpf|lcd4linux&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And see if anything good shows up. From memory, there might be a “lcd4linux-dpf” package but at some point in time I believe that the changes were added to “lcd4linux-custom”. Doing “dpkg info lcd4linux-custom” does indeed list “libdpf” as a dependency, which is a good sign that the package will work with your hacked dpf device.&lt;/p&gt;
+&lt;p&gt;If you are less lucky and cannot get a working package, if you have an ar71xx platform device like me, then you can download a prebuilt package from &lt;a href=&quot;http://dl.dropbox.com/u/55682296/openwrt/lcd4linux/openwrt-dpf_r1184-2.tar.bz2&quot;&gt;here&lt;/a&gt; or &lt;a href=&quot;/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/lcd4linux-dpf_r1184-2_ar71xx_MPD2.ipk&quot;&gt;mirror&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;If you are even less lucky and run a different build target then you will have to build your own package from lcd4linux and and latest dpflib. Start digging &lt;a href=&quot;https://forum.openwrt.org/viewtopic.php?id=34133&quot;&gt;here&lt;/a&gt; for instructions.&lt;/p&gt;
+&lt;p&gt;Once the correct package is located, install it with the usual&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;opkg install path_to_package
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, /etc/lcd4linux.config needs to be replaced with &lt;a href=&quot;/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/lcd4linux.config&quot;&gt;this one&lt;/a&gt;. The first section might need some customization to get it working but it is all self-explanatory.&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&quot;/blog/articles/randomizing-guest-wifi-password-with-openwrt-and-a-hacked-digital-photo-frame/lcd4linux&quot;&gt;/etc/init.d/lcd4linux&lt;/a&gt; init script should be edited as well, the -o and -q options should be commented out.&lt;/p&gt;
+&lt;p&gt;Now lcd4linux can be run with “/etc/init.d/lcd4linux start” and that’s that.&lt;/p&gt;
+&lt;h1 id=&quot;password-reset-script&quot;&gt;Password reset script&lt;/h1&gt;
+&lt;p&gt;A script that changes wifi password with a random value and restarts the wifi is pasted below.&lt;/p&gt;
+&lt;h2 id=&quot;-usr-bin-wifipass-sh&quot;&gt;/usr/bin/wifipass.sh&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;&lt;span class=&quot;shebang&quot;&gt;#!/bin/sh
+&lt;/span&gt;
+KEY=$(head /dev/urandom | tr -dc &lt;span class=&quot;string&quot;&gt;&quot;0123456789&quot;&lt;/span&gt; | cut -c &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;)
+
+uci &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; wireless.@wifi-iface[&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;].key=&lt;span class=&quot;variable&quot;&gt;$KEY&lt;/span&gt;
+uci commit wireless
+
+logger wifi pass changed to &lt;span class=&quot;variable&quot;&gt;$KEY&lt;/span&gt; 
+
+wifi
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A cron job that calls this script every 24hours can now be setup (an exercise for the reader).&lt;/p&gt;
+&lt;h1 id=&quot;button&quot;&gt;Button&lt;/h1&gt;
+&lt;p&gt;Also it is useful if the device owner can manually trigger a password change. This can be achieved by adding the following section to /etc/config/system:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;config button
+    option action &lt;span class=&quot;string&quot;&gt;'pressed'&lt;/span&gt;
+    option button &lt;span class=&quot;string&quot;&gt;'wps'&lt;/span&gt;
+    option handler &lt;span class=&quot;string&quot;&gt;'logger wps pressed, resetting wifi pass; /usr/bin/wifipass.sh'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;or with uci syntax:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;uci add system button    
+uci &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; system.@button[-&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;].button=wps
+uci &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; system.@button[-&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;].action=pressed
+uci &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; system.@button[-&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;].handler=&lt;span class=&quot;string&quot;&gt;'logger wps pressed, resetting wifi pass; /usr/bin/wifipass.sh'&lt;/span&gt;
+uci commit system
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To identify the desired button’s internal name and action (in this case “wps” and “pressed”), the following script should be saved as /etc/hotplug.d/button/buttons. When the button is pressed, name and action will be logged.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;lang-bash&quot;&gt;&lt;span class=&quot;shebang&quot;&gt;#!/bin/sh&lt;/span&gt;
+logger &lt;span class=&quot;variable&quot;&gt;$BUTTON&lt;/span&gt;
+logger &lt;span class=&quot;variable&quot;&gt;$ACTION&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&quot;other-relevant-sources&quot;&gt;Other relevant sources&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.vdr-portal.de/board18-vdr-hardware/board11-lcds/p1043999-pearl-display-textskalierung-unter-lcd4linux/&quot;&gt;http://www.vdr-portal.de/board18-vdr-hardware/board11-lcds/p1043999-pearl-display-textskalierung-unter-lcd4linux/&lt;/a&gt;
+&lt;a href=&quot;http://flux242.blogspot.com/2012/02/digital-picture-frame-as-router-status.html&quot;&gt;http://flux242.blogspot.com/2012/02/digital-picture-frame-as-router-status.html&lt;/a&gt;
+&lt;a href=&quot;http://sourceforge.net/p/dpf-ax/code/48/tree/&quot;&gt;http://sourceforge.net/p/dpf-ax/code/48/tree/&lt;/a&gt;
+&lt;a href=&quot;https://forum.openwrt.org/viewtopic.php?id=34133&amp;amp;p=3&quot;&gt;https://forum.openwrt.org/viewtopic.php?id=34133&amp;amp;p=3&lt;/a&gt;
+&lt;a href=&quot;http://forum.doozan.com/read.php?9,9915,10788,quote=1&quot;&gt;http://forum.doozan.com/read.php?9,9915,10788,quote=1&lt;/a&gt;
+&lt;a href=&quot;http://picframe.spritesserver.nl/wiki/index.php/DPF_with_AppoTech_AX206&quot;&gt;http://picframe.spritesserver.nl/wiki/index.php/DPF_with_AppoTech_AX206&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    <item>
+      <title>msysgit, sourcetree and long paths (&gt;260 chars)</title>
+      <link>http://pingec.si/blog/blog/articles/msysgit-longpath/</link>
+      <pubDate>Thu, 20 Mar 2014 01:00:00 +0100</pubDate>
+      <guid isPermaLink="true">http://pingec.si/blog/blog/articles/msysgit-longpath/</guid>
+      <author></author>
+      <description>&lt;p&gt;Using git on Windows is usually a pleasant experience, but not always. It is not a secret that Windows has problems with file paths which are &lt;a href=&quot;http://support.thoughtworks.com/entries/20628041-Git-checkout-fails-on-Windows-when-path-length-is-too-long-&quot;&gt;longer than 260 chars&lt;/a&gt;. There are &lt;a href=&quot;http://msdn.microsoft.com/en-us/library/aa365247%28v=vs.85%29.aspx#maxpath&quot;&gt;workarounds&lt;/a&gt; but they have to be implemented in the application.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;more&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;With msysgit 1.7.9 installed some very weird things were happening to me.&lt;/p&gt;
+&lt;p&gt;From the screenshot below, three things can be noticed: msysgit and sourcetree were detecting a lot of files (which had suspicously long paths) as deleted although they were not. And interestingly, when I staged the deletion of such a file in sourcetree, the file reappeared as untracked which is very odd behavior. &lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;weird2.png&quot;&gt;
+&lt;img src=&quot;/blog/articles/msysgit-longpath/weird2.png&quot; alt=&quot;screenshot&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I tried the same test with cygwin’s git and there, everything worked as I would have expected it to (no deleted files).&lt;/p&gt;
+&lt;p&gt;I would have left it at that and used cygwin from that point on, were it not for sourcetree using msysgit under the hood resulting in being broken as well.&lt;/p&gt;
+&lt;p&gt;Luckily, there is a fix:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Download and install &lt;a href=&quot;http://git-scm.com/download/win&quot;&gt;msysgit v. 1.9.0 or higher&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;enable longpaths with ‘git config core.longpaths true’&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;After installing msysgit 1.9.0 there is an immediate improvement as now msysgit now warns you about the specific problem with “Filename too long” warnings instead of acting crazy like it was before. &lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;weird3.PNG&quot;&gt;
+&lt;img src=&quot;/blog/articles/msysgit-longpath/weird3.PNG&quot; alt=&quot;screenshot2&quot;&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;And after you turn on longpaths with &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;‘git config core.longpaths true’&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;all the warnings disappear and sourcetree works fine again…&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt;
+When using SourceTree you should also make sure that SourceTree is using the System’s Git and not the embedded one. Tools-&amp;gt;Options-&amp;gt;Git-&amp;gt;”Use System Git” button and point it to the correct git.exe. 
+In my case the path was “C:\Users\username\AppData\Local\Programs\Git\cmd\git.exe”&lt;/p&gt;
+</description>
+    </item>
+  </channel>
+</rss>
